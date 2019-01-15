@@ -94,7 +94,7 @@ final class Parser {
             return null;
         }
 
-        if (getCurrentToken().getType() == TokenType.OpExpressionSeparator) {
+        if (getCurrentToken().getType() == TokenType.OP_EXPRESSION_SEPARATOR) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpExpressionSeparator() == null) {
@@ -129,7 +129,7 @@ final class Parser {
         }
 
         // Look forward
-        if (getCurrentToken().getType() == TokenType.OpFormat) {
+        if (getCurrentToken().getType() == TokenType.OP_FORMAT) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpFormat() == null) {
@@ -184,7 +184,7 @@ final class Parser {
 
         expressions.add(node);
 
-        while (getCurrentToken().getType() == TokenType.Comma) {
+        while (getCurrentToken().getType() == TokenType.COMMA) {
             if (Comma() == null) {
                 current = saved;
                 return null;
@@ -221,7 +221,7 @@ final class Parser {
             return null;
         }
 
-        while (getCurrentToken().getType() == TokenType.OpConditionalOr) {
+        while (getCurrentToken().getType() == TokenType.OP_CONDITIONAL_OR) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpConditionalOr() == null) {
@@ -256,7 +256,7 @@ final class Parser {
             return null;
         }
 
-        while (getCurrentToken().getType() == TokenType.OpConditionalAnd) {
+        while (getCurrentToken().getType() == TokenType.OP_CONDITIONAL_AND) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpConditionalAnd() == null) {
@@ -291,7 +291,7 @@ final class Parser {
             return null;
         }
 
-        while (getCurrentToken().getType() == TokenType.OpOr) {
+        while (getCurrentToken().getType() == TokenType.OP_OR) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpOr() == null) {
@@ -326,7 +326,7 @@ final class Parser {
             return null;
         }
 
-        while (getCurrentToken().getType() == TokenType.OpXor) {
+        while (getCurrentToken().getType() == TokenType.OP_XOR) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpXor() == null) {
@@ -361,7 +361,7 @@ final class Parser {
             return null;
         }
 
-        while (getCurrentToken().getType() == TokenType.OpAnd) {
+        while (getCurrentToken().getType() == TokenType.OP_AND) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpAnd() == null) {
@@ -396,8 +396,8 @@ final class Parser {
             return null;
         }
 
-        while (getCurrentToken().getType() == TokenType.OpEqual ||
-            getCurrentToken().getType() == TokenType.OpNotEqual) {
+        while (getCurrentToken().getType() == TokenType.OP_EQUAL ||
+            getCurrentToken().getType() == TokenType.OP_NOT_EQUAL) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpEqual() == null && OpNotEqual() == null) {
@@ -432,10 +432,10 @@ final class Parser {
             return null;
         }
 
-        while (getCurrentToken().getType() == TokenType.OpLess ||
-            getCurrentToken().getType() == TokenType.OpLessOrEqual ||
-            getCurrentToken().getType() == TokenType.OpGreater ||
-            getCurrentToken().getType() == TokenType.OpGreaterOrEqual) {
+        while (getCurrentToken().getType() == TokenType.OP_LESS ||
+            getCurrentToken().getType() == TokenType.OP_LESS_OR_EQUAL ||
+            getCurrentToken().getType() == TokenType.OP_GREATER ||
+            getCurrentToken().getType() == TokenType.OP_GREATER_OR_EQUAL) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpLess() == null && OpLessOrEqual() == null && OpGreater() == null && OpGreaterOrEqual() == null) {
@@ -470,8 +470,8 @@ final class Parser {
             return null;
         }
 
-        while (getCurrentToken().getType() == TokenType.OpAdd ||
-            getCurrentToken().getType() == TokenType.OpSubtract) {
+        while (getCurrentToken().getType() == TokenType.OP_ADD ||
+            getCurrentToken().getType() == TokenType.OP_SUBTRACT) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpAdd() == null && OpSubtract() == null) {
@@ -506,10 +506,10 @@ final class Parser {
             return null;
         }
 
-        while (getCurrentToken().getType() == TokenType.OpMultiply ||
-            getCurrentToken().getType() == TokenType.OpDivide ||
-            getCurrentToken().getType() == TokenType.OpMod ||
-            getCurrentToken().getType() == TokenType.OpPower) {
+        while (getCurrentToken().getType() == TokenType.OP_MULTIPLY ||
+            getCurrentToken().getType() == TokenType.OP_DIVIDE ||
+            getCurrentToken().getType() == TokenType.OP_MOD ||
+            getCurrentToken().getType() == TokenType.OP_POWER) {
             ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
 
             if (OpMultiply() == null && OpDivide() == null && OpMod() == null && OpPower() == null) {
@@ -545,7 +545,7 @@ final class Parser {
         }
 
         // Single identifier cannot pass as dereferencing
-        if (getCurrentToken().getType() != TokenType.OpDot) {
+        if (getCurrentToken().getType() != TokenType.OP_DOT) {
             current = saved;
             return null;
         }
@@ -555,7 +555,7 @@ final class Parser {
         ParseTreeNode node2 = new ParseTreeNode(getCurrentToken());
         node2.getChildren().add(node);
 
-        while (getCurrentToken().getType() == TokenType.OpDot) {
+        while (getCurrentToken().getType() == TokenType.OP_DOT) {
             if (OpDot() == null) {
                 current = saved;
                 return null;
@@ -587,7 +587,7 @@ final class Parser {
         }
 
         // Single identifier cannot pass as dereferencing
-        if (getCurrentToken().getType() != TokenType.OpReference) {
+        if (getCurrentToken().getType() != TokenType.OP_REFERENCE) {
             current = saved;
             return null;
         }
@@ -615,7 +615,7 @@ final class Parser {
             node3.getChildren().add(0, node2);
             node = node3;
         } else {
-            node = new ParseTreeNode(new Token(".", TokenType.OpDot));
+            node = new ParseTreeNode(new Token(".", TokenType.OP_DOT));
             node.getChildren().add(node2);
             node.getChildren().add(node3);
         }
@@ -633,7 +633,7 @@ final class Parser {
 
         // Number, followed by identifier is a quantity expression, e.g. 5mm or 1kg
         if ((node = FloatNumber()) != null) {
-            if (getCurrentToken().getType() == TokenType.Identifier) {
+            if (getCurrentToken().getType() == TokenType.IDENTIFIER) {
                 node.getChildren().add(Identifier());
             }
 
@@ -641,7 +641,7 @@ final class Parser {
         }
 
         if ((node = IntNumber()) != null) {
-            if (getCurrentToken().getType() == TokenType.Identifier) {
+            if (getCurrentToken().getType() == TokenType.IDENTIFIER) {
                 node.getChildren().add(Identifier());
             }
 
@@ -689,7 +689,7 @@ final class Parser {
                     return null;
                 }
 
-                node.setToken(node.getToken().withType(TokenType.FunctionCall));
+                node.setToken(node.getToken().withType(TokenType.FUNCTION_CALL));
 
                 return node;
             }
@@ -697,7 +697,7 @@ final class Parser {
             return node;
         }
 
-        if (getCurrentToken().getType() == TokenType.OpNot) {
+        if (getCurrentToken().getType() == TokenType.OP_NOT) {
             if ((node = OpNot()) == null) {
                 current = saved;
                 return null;
@@ -714,7 +714,7 @@ final class Parser {
             return node;
         }
 
-        if (getCurrentToken().getType() == TokenType.OpSubtract) {
+        if (getCurrentToken().getType() == TokenType.OP_SUBTRACT) {
             if ((node = OpSubtract()) == null) {
                 current = saved;
                 return null;
@@ -761,7 +761,7 @@ final class Parser {
     private List<ParseTreeNode> paramList() {
         int saved = current;
 
-        if (getCurrentToken().getType() == TokenType.Cb) {
+        if (getCurrentToken().getType() == TokenType.CB) {
             return new ArrayList<>();
         }
 
@@ -813,7 +813,7 @@ final class Parser {
      * Parses a 'Comma' terminal.
      */
     private ParseTreeNode Comma() {
-        return ParseCurrent(TokenType.Comma);
+        return ParseCurrent(TokenType.COMMA);
     }
 
     /**
@@ -827,207 +827,207 @@ final class Parser {
      * Parses a 'Cb' terminal.
      */
     private ParseTreeNode Cb() {
-        return ParseCurrent(TokenType.Cb);
+        return ParseCurrent(TokenType.CB);
     }
 
     /**
      * Parses an 'OpAdd' terminal.
      */
     private ParseTreeNode OpAdd() {
-        return ParseCurrent(TokenType.OpAdd);
+        return ParseCurrent(TokenType.OP_ADD);
     }
 
     /**
      * Parses an 'OpSubtract' terminal.
      */
     private ParseTreeNode OpSubtract() {
-        return ParseCurrent(TokenType.OpSubtract);
+        return ParseCurrent(TokenType.OP_SUBTRACT);
     }
 
     /**
      * Parses an 'OpNot' terminal.
      */
     private ParseTreeNode OpNot() {
-        return ParseCurrent(TokenType.OpNot);
+        return ParseCurrent(TokenType.OP_NOT);
     }
 
     /**
      * Parses an 'OpMultiply' terminal.
      */
     private ParseTreeNode OpMultiply() {
-        return ParseCurrent(TokenType.OpMultiply);
+        return ParseCurrent(TokenType.OP_MULTIPLY);
     }
 
     /**
      * Parses an 'OpDivide' terminal.
      */
     private ParseTreeNode OpDivide() {
-        return ParseCurrent(TokenType.OpDivide);
+        return ParseCurrent(TokenType.OP_DIVIDE);
     }
 
     /**
      * Parses an 'OpMod' terminal.
      */
     private ParseTreeNode OpMod() {
-        return ParseCurrent(TokenType.OpMod);
+        return ParseCurrent(TokenType.OP_MOD);
     }
 
     /**
      * Parses an 'OpPower' terminal.
      */
     private ParseTreeNode OpPower() {
-        return ParseCurrent(TokenType.OpPower);
+        return ParseCurrent(TokenType.OP_POWER);
     }
 
     /**
      * Parses an 'OpLess' terminal.
      */
     private ParseTreeNode OpLess() {
-        return ParseCurrent(TokenType.OpLess);
+        return ParseCurrent(TokenType.OP_LESS);
     }
 
     /**
      * Parses an 'OpLessOrEqual' terminal.
      */
     private ParseTreeNode OpLessOrEqual() {
-        return ParseCurrent(TokenType.OpLessOrEqual);
+        return ParseCurrent(TokenType.OP_LESS_OR_EQUAL);
     }
 
     /**
      * Parses an 'OpGreater' terminal.
      */
     private ParseTreeNode OpGreater() {
-        return ParseCurrent(TokenType.OpGreater);
+        return ParseCurrent(TokenType.OP_GREATER);
     }
 
     /**
      * Parses an 'OpGreaterOrEqual' terminal.
      */
     private ParseTreeNode OpGreaterOrEqual() {
-        return ParseCurrent(TokenType.OpGreaterOrEqual);
+        return ParseCurrent(TokenType.OP_GREATER_OR_EQUAL);
     }
 
     /**
      * Parses an 'OpEqual' terminal.
      */
     private ParseTreeNode OpEqual() {
-        return ParseCurrent(TokenType.OpEqual);
+        return ParseCurrent(TokenType.OP_EQUAL);
     }
 
     /**
      * Parses an 'OpNotEqual' terminal.
      */
     private ParseTreeNode OpNotEqual() {
-        return ParseCurrent(TokenType.OpNotEqual);
+        return ParseCurrent(TokenType.OP_NOT_EQUAL);
     }
 
     /**
      * Parses an 'OpAnd' terminal.
      */
     private ParseTreeNode OpAnd() {
-        return ParseCurrent(TokenType.OpAnd);
+        return ParseCurrent(TokenType.OP_AND);
     }
 
     /**
      * Parses an 'OpOr' terminal.
      */
     private ParseTreeNode OpOr() {
-        return ParseCurrent(TokenType.OpOr);
+        return ParseCurrent(TokenType.OP_OR);
     }
 
     /**
      * Parses an 'OpXor' terminal.
      */
     private ParseTreeNode OpXor() {
-        return ParseCurrent(TokenType.OpXor);
+        return ParseCurrent(TokenType.OP_XOR);
     }
 
     /**
      * Parses an 'OpConditionalAnd' terminal.
      */
     private ParseTreeNode OpConditionalAnd() {
-        return ParseCurrent(TokenType.OpConditionalAnd);
+        return ParseCurrent(TokenType.OP_CONDITIONAL_AND);
     }
 
     /**
      * Parses an 'OpConditionalOr' terminal.
      */
     private ParseTreeNode OpConditionalOr() {
-        return ParseCurrent(TokenType.OpConditionalOr);
+        return ParseCurrent(TokenType.OP_CONDITIONAL_OR);
     }
 
     /**
      * Parses an 'OpDot' terminal.
      */
     private ParseTreeNode OpDot() {
-        return ParseCurrent(TokenType.OpDot);
+        return ParseCurrent(TokenType.OP_DOT);
     }
 
     private ParseTreeNode OpReference() {
-        return ParseCurrent(TokenType.OpReference);
+        return ParseCurrent(TokenType.OP_REFERENCE);
     }
 
     /**
      * Parses an 'OpFormat' terminal.
      */
     private ParseTreeNode OpFormat() {
-        return ParseCurrent(TokenType.OpFormat);
+        return ParseCurrent(TokenType.OP_FORMAT);
     }
 
     /**
      * Parses an 'OpExpressionSeparator' terminal.
      */
     private ParseTreeNode OpExpressionSeparator() {
-        return ParseCurrent(TokenType.OpExpressionSeparator);
+        return ParseCurrent(TokenType.OP_EXPRESSION_SEPARATOR);
     }
 
     /**
      * Parses an 'OpCulture' terminal.
      */
     private ParseTreeNode OpCulture() {
-        return ParseCurrent(TokenType.OpCulture);
+        return ParseCurrent(TokenType.OP_CULTURE);
     }
 
     /**
      * Parses a 'Format' terminal.
      */
     private ParseTreeNode Format() {
-        return ParseCurrent(TokenType.Format);
+        return ParseCurrent(TokenType.FORMAT);
     }
 
     /**
      * Parses a 'Discard' terminal.
      */
     private ParseTreeNode Discard() {
-        return ParseCurrent(TokenType.Discard);
+        return ParseCurrent(TokenType.DISCARD);
     }
 
     /**
      * Parses a 'Culture' terminal.
      */
     private ParseTreeNode Culture() {
-        return ParseCurrent(TokenType.Culture);
+        return ParseCurrent(TokenType.CULTURE);
     }
 
     /**
      * Parses an 'Identifier' terminal.
      */
     private ParseTreeNode Identifier() {
-        return ParseCurrent(TokenType.Identifier);
+        return ParseCurrent(TokenType.IDENTIFIER);
     }
 
     /**
      * Parses an 'IntNumber' terminal.
      */
     private ParseTreeNode IntNumber() {
-        return ParseCurrent(TokenType.IntNumber);
+        return ParseCurrent(TokenType.INT_NUMBER);
     }
 
     /**
      * Parses a 'String' terminal.
      */
     private ParseTreeNode String() {
-        return ParseCurrent(TokenType.String);
+        return ParseCurrent(TokenType.STRING);
     }
 
     /**
@@ -1041,14 +1041,14 @@ final class Parser {
      * Parses a 'FloatNumber' terminal.
      */
     private ParseTreeNode FloatNumber() {
-        return ParseCurrent(TokenType.FloatNumber);
+        return ParseCurrent(TokenType.FLOAT_NUMBER);
     }
 
     /**
      * Parses a 'Color' terminal.
      */
     private ParseTreeNode Color() {
-        return ParseCurrent(TokenType.Color);
+        return ParseCurrent(TokenType.COLOR);
     }
 
     /**

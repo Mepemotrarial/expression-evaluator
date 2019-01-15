@@ -772,19 +772,19 @@ public final class ByteCode {
                 code.add(t.getText());
                 break;
             }
-            case FloatNumber: {
+            case FLOAT_NUMBER: {
                 code.add(Op.FLOAT);
                 // Always parse in invariant culture because the float regular expression in Lexer is culture-independent
                 code.add(Double.parseDouble(t.getText()));
                 break;
             }
-            case IntNumber: {
+            case INT_NUMBER: {
                 code.add(Op.INT);
                 // Always parse in invariant culture because the float regular expression in Lexer is culture-independent
                 code.add(Integer.parseInt(t.getText()));
                 break;
             }
-            case String: {
+            case STRING: {
                 code.add(Op.STRING);
                 code.add(t.getText());
                 break;
@@ -793,16 +793,16 @@ public final class ByteCode {
                 code.add(Op.NULL);
                 break;
             }
-            case Color: {
+            case COLOR: {
                 code.add(Op.COLOR);
                 code.add(parseColor(t.getText()));
                 break;
             }
-            case OpAdd: {
+            case OP_ADD: {
                 code.add(Op.ADD);
                 break;
             }
-            case OpSubtract: {
+            case OP_SUBTRACT: {
                 if (node.getChildren().size() > 1) {
                     code.add(Op.SUB);
                 } else {
@@ -810,120 +810,120 @@ public final class ByteCode {
                 }
                 break;
             }
-            case OpMultiply: {
+            case OP_MULTIPLY: {
                 code.add(Op.MUL);
                 break;
             }
-            case OpDivide: {
+            case OP_DIVIDE: {
                 code.add(Op.DIV);
                 break;
             }
-            case OpMod: {
+            case OP_MOD: {
                 code.add(Op.MOD);
                 break;
             }
-            case OpLess: {
+            case OP_LESS: {
                 code.add(Op.LESS);
                 break;
             }
-            case OpGreater: {
+            case OP_GREATER: {
                 code.add(Op.GREATER);
                 break;
             }
-            case OpEqual: {
+            case OP_EQUAL: {
                 code.add(Op.EQUAL);
                 break;
             }
-            case OpNotEqual: {
+            case OP_NOT_EQUAL: {
                 code.add(Op.NOT_EQUAL);
                 break;
             }
-            case OpLessOrEqual: {
+            case OP_LESS_OR_EQUAL: {
                 code.add(Op.LESS_OR_EQUAL);
                 break;
             }
-            case OpGreaterOrEqual: {
+            case OP_GREATER_OR_EQUAL: {
                 code.add(Op.GREATER_OR_EQUAL);
                 break;
             }
-            case OpNot: {
+            case OP_NOT: {
                 code.add(Op.NOT);
                 break;
             }
-            case OpAnd: {
+            case OP_AND: {
                 code.add(Op.AND);
                 break;
             }
-            case OpXor: {
+            case OP_XOR: {
                 code.add(Op.XOR);
                 break;
             }
-            case OpPower: {
+            case OP_POWER: {
                 code.add(Op.POWER);
                 break;
             }
-            case OpOr: {
+            case OP_OR: {
                 code.add(Op.OR);
                 break;
             }
-            case OpConditionalAnd: {
+            case OP_CONDITIONAL_AND: {
                 code.add(Op.CONDITIONAL_AND);
                 break;
             }
-            case OpConditionalOr: {
+            case OP_CONDITIONAL_OR: {
                 code.add(Op.CONDITIONAL_OR);
                 break;
             }
-            case OpDot: {
+            case OP_DOT: {
                 code.add(Op.DOT);
                 code.add(node.getChildren().size()); // Dot count
                 break;
             }
-            case OpReference: {
+            case OP_REFERENCE: {
                 code.add(Op.REFERENCE);
                 code.add(node.getChildren().size()); // Param count
                 break;
             }
-            case OpFormat: {
+            case OP_FORMAT: {
                 code.add(Op.FORMATTING);
                 break;
             }
-            case Discard: {
+            case DISCARD: {
                 code.add(Op.DISCARD);
                 break;
             }
-            case Format: {
+            case FORMAT: {
                 code.add(Op.FORMAT);
                 code.add(t.getText().substring(1, t.getText().length() - 1));
                 break;
             }
-            case Culture: {
+            case CULTURE: {
                 code.add(Op.CULTURE);
                 code.add(t.getText().substring(1, t.getText().length() - 1));
                 break;
             }
-            case Identifier: {
+            case IDENTIFIER: {
                 // If the operation at the top of the stack is not dereferencing this is a normal identifier.
                 // Otherwise, this is an object or member reference
                 Token parent = stack.peek();
                 if (parent != null &&
-                    (parent.getType() == TokenType.OpDot || parent.getType() == TokenType.OpReference))
+                    (parent.getType() == TokenType.OP_DOT || parent.getType() == TokenType.OP_REFERENCE))
                     code.add(Op.OBJECT_OR_MEMBER);
                 else if (parent != null &&
-                    (parent.getType() == TokenType.IntNumber || parent.getType() == TokenType.FloatNumber))
+                    (parent.getType() == TokenType.INT_NUMBER || parent.getType() == TokenType.FLOAT_NUMBER))
                     code.add(Op.QUANTITY);
                 else
                     code.add(Op.IDENTIFIER);
                 code.add(t.getText());
                 break;
             }
-            case FunctionCall: {
+            case FUNCTION_CALL: {
                 code.add(Op.FUNCTION_CALL);
                 code.add(node.getChildren().size()); // Param count
                 code.add(t.getText());
                 break;
             }
-            case OpExpressionSeparator: {
+            case OP_EXPRESSION_SEPARATOR: {
                 code.add(Op.EXPRESSION_SEPARATOR);
                 break;
             }

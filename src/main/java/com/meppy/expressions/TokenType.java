@@ -17,71 +17,71 @@ enum TokenType {
     /** Indicates an opening bracket. */
     OB,
     /** Indicates a closing bracket. */
-    Cb,
+    CB,
     /** Indicates an identifier. */
-    Identifier,
+    IDENTIFIER,
     /** Indicates a function invocation. */
-    FunctionCall,
+    FUNCTION_CALL,
     /** Indicates a floating point number. */
-    FloatNumber,
+    FLOAT_NUMBER,
     /** Indicates an integer number. */
-    IntNumber,
+    INT_NUMBER,
     /** Indicates a string literal. */
-    String,
+    STRING,
     /** Indicates a color literal. */
-    Color,
+    COLOR,
     /** Indicates an addition operator. */
-    OpAdd,
+    OP_ADD,
     /** Indicates a subtraction operator. */
-    OpSubtract,
+    OP_SUBTRACT,
     /** Indicates a multiplication operator. */
-    OpMultiply,
+    OP_MULTIPLY,
     /** Indicates a division operator. */
-    OpDivide,
+    OP_DIVIDE,
     /** Indicates a modulo operator. */
-    OpMod,
+    OP_MOD,
     /** Indicates a less than comparison operator. */
-    OpLess,
+    OP_LESS,
     /** Indicates a greater than comparison operator. */
-    OpGreater,
+    OP_GREATER,
     /** Indicates an equal comparison operator. */
-    OpEqual,
+    OP_EQUAL,
     /** Indicates a not equal comparison operator. */
-    OpNotEqual,
+    OP_NOT_EQUAL,
     /** Indicates a less than or equal comparison operator. */
-    OpLessOrEqual,
+    OP_LESS_OR_EQUAL,
     /** Indicates a greater than or equal comparison operator. */
-    OpGreaterOrEqual,
+    OP_GREATER_OR_EQUAL,
     /** Indicates a boolean negation operator. */
-    OpNot,
+    OP_NOT,
     /** Indicates a bitwise and operator. */
-    OpAnd,
+    OP_AND,
     /** Indicates a bitwise exclusive or operator. */
-    OpXor,
+    OP_XOR,
     /** Indicates a raise to power operator. */
-    OpPower,
+    OP_POWER,
     /** Indicates a bitwise or operator. */
-    OpOr,
+    OP_OR,
     /** Indicates a conditional and operator. */
-    OpConditionalAnd,
+    OP_CONDITIONAL_AND,
     /** Indicates a conditional or operator. */
-    OpConditionalOr,
+    OP_CONDITIONAL_OR,
     /** Indicates a member access operator. */
-    OpDot,
+    OP_DOT,
     /** Indicates a reference operator. */
-    OpReference,
+    OP_REFERENCE,
     /** Indicates a comma. */
-    Comma,
+    COMMA,
     /** Indicates a formatting operator. */
-    OpFormat,
+    OP_FORMAT,
     /** Indicates a formatting string. */
-    Format,
+    FORMAT,
     /** Indicates a discarding symbol, that is, a symbol, which when specified as a format will prevent the expression from appearing in the final text. */
-    Discard,
+    DISCARD,
     /** Indicates a culture specifier. */
-    OpCulture,
+    OP_CULTURE,
     /** Indicates a culture name. */
-    Culture,
+    CULTURE,
     /** Indicates a separator between expressions. */
-    OpExpressionSeparator
+    OP_EXPRESSION_SEPARATOR
 }

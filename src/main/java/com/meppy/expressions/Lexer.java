@@ -268,7 +268,7 @@ final class Lexer {
      * Recognizes a closing bracket.
      */
     private boolean cb() {
-        return matchToken(")", TokenType.Cb);
+        return matchToken(")", TokenType.CB);
     }
 
     /**
@@ -301,77 +301,77 @@ final class Lexer {
      * Recognizes an addition operator '+'.
      */
     private boolean opAdd() {
-        return matchToken("+", TokenType.OpAdd);
+        return matchToken("+", TokenType.OP_ADD);
     }
 
     /**
      * Recognizes a subtraction operator '-'.
      */
     private boolean opSubtract() {
-        return matchToken("-", TokenType.OpSubtract);
+        return matchToken("-", TokenType.OP_SUBTRACT);
     }
 
     /**
      * Recognizes a multiplication operator '*'.
      */
     private boolean opMultiply() {
-        return matchToken("*", TokenType.OpMultiply);
+        return matchToken("*", TokenType.OP_MULTIPLY);
     }
 
     /**
      * Recognizes a division operator '/'.
      */
     private boolean opDivide() {
-        return matchToken("/", TokenType.OpDivide);
+        return matchToken("/", TokenType.OP_DIVIDE);
     }
 
     /**
      * Recognizes a modulo operator '%'.
      */
     private boolean opMod() {
-        return matchToken("%", TokenType.OpMod);
+        return matchToken("%", TokenType.OP_MOD);
     }
 
     /**
      * Recognizes a less than comparison operator '&lt;'.
      */
     private boolean opLess() {
-        return matchToken("<", TokenType.OpLess);
+        return matchToken("<", TokenType.OP_LESS);
     }
 
     /**
      * Recognizes a greater than comparison operator '&gt;'.
      */
     private boolean opGreater() {
-        return matchToken(">", TokenType.OpGreater);
+        return matchToken(">", TokenType.OP_GREATER);
     }
 
     /**
      * Recognizes an equal comparison operator '=='.
      */
     private boolean opEqual() {
-        return matchToken("==", TokenType.OpEqual);
+        return matchToken("==", TokenType.OP_EQUAL);
     }
 
     /**
      * Recognizes a not equal comparison operator '!='.
      */
     private boolean opNotEqual() {
-        return matchToken("!=", TokenType.OpNotEqual);
+        return matchToken("!=", TokenType.OP_NOT_EQUAL);
     }
 
     /**
      * Recognizes a less than or equal comparison operator '&lt;='.
      */
     private boolean opLessOrEqual() {
-        return matchToken("<=", TokenType.OpLessOrEqual);
+        return matchToken("<=", TokenType.OP_LESS_OR_EQUAL);
     }
 
     /**
      * Recognizes a greater than or equal comparison operator '&gt;='.
      */
     private boolean opGreaterOrEqual() {
-        return matchToken(">=", TokenType.OpGreaterOrEqual);
+        return matchToken(">=", TokenType.OP_GREATER_OR_EQUAL);
     }
 
     /**
@@ -382,70 +382,70 @@ final class Lexer {
             return false;
         }
 
-        return matchToken("!", TokenType.OpNot);
+        return matchToken("!", TokenType.OP_NOT);
     }
 
     /**
      * Recognizes a bitwise and operator '&amp;'.
      */
     private boolean opAnd() {
-        return matchToken("&", TokenType.OpAnd);
+        return matchToken("&", TokenType.OP_AND);
     }
 
     /**
      * Recognizes a bitwise or operator '|'.
      */
     private boolean opOr() {
-        return matchToken("|", TokenType.OpOr);
+        return matchToken("|", TokenType.OP_OR);
     }
 
     /**
      * Recognizes a bitwise or operator '^'.
      */
     private boolean opXor() {
-        return matchToken("^", TokenType.OpXor);
+        return matchToken("^", TokenType.OP_XOR);
     }
 
     /**
      * Recognizes the raise to power operator '^'.
      */
     private boolean opPower() {
-        return matchToken("^", TokenType.OpPower);
+        return matchToken("^", TokenType.OP_POWER);
     }
 
     /**
      * Recognizes a conditional and operator '&amp;&amp;'.
      */
     private boolean opConditionalAnd() {
-        return matchToken("&&", TokenType.OpConditionalAnd);
+        return matchToken("&&", TokenType.OP_CONDITIONAL_AND);
     }
 
     /**
      * Recognizes a conditional or operator '||'.
      */
     private boolean opConditionalOr() {
-        return matchToken("||", TokenType.OpConditionalOr);
+        return matchToken("||", TokenType.OP_CONDITIONAL_OR);
     }
 
     /**
      * Recognizes a reference operator '!'.
      */
     private boolean opReference() {
-        return matchToken("!", TokenType.OpReference);
+        return matchToken("!", TokenType.OP_REFERENCE);
     }
 
     /**
      * Recognizes a member access operator '.'.
      */
     private boolean opDot() {
-        return matchToken(".", TokenType.OpDot);
+        return matchToken(".", TokenType.OP_DOT);
     }
 
     /**
      * Recognizes the formatting operator '@'.
      */
     private boolean opFormat() {
-        if (matchToken("@", TokenType.OpFormat)) {
+        if (matchToken("@", TokenType.OP_FORMAT)) {
             inFormat = true;
             return true;
         }
@@ -457,7 +457,7 @@ final class Lexer {
      * Recognizes the culture specifier ':' within a format.
      */
     private boolean opCulture() {
-        if (inFormat && matchToken(":", TokenType.OpCulture)) {
+        if (inFormat && matchToken(":", TokenType.OP_CULTURE)) {
             inLocale = true;
             return true;
         }
@@ -467,7 +467,7 @@ final class Lexer {
 
     private boolean opExpressionSeparator() {
         if (match(";") || match(",")) {
-            tokens.add(new Token(input.substring(current, current + 1), TokenType.OpExpressionSeparator));
+            tokens.add(new Token(input.substring(current, current + 1), TokenType.OP_EXPRESSION_SEPARATOR));
             current++;
             return true;
         }
@@ -479,7 +479,7 @@ final class Lexer {
      * Recognizes comma.
      */
     private boolean comma() {
-        return matchToken(",", TokenType.Comma);
+        return matchToken(",", TokenType.COMMA);
     }
 
     /**
@@ -506,7 +506,7 @@ final class Lexer {
     private boolean identifier() {
         int length = match(identifierRegex);
         if (length > 0) {
-            tokens.add(new Token(input.substring(current, current + length), TokenType.Identifier));
+            tokens.add(new Token(input.substring(current, current + length), TokenType.IDENTIFIER));
             current += length;
             return true;
         }
@@ -521,13 +521,13 @@ final class Lexer {
         // Note: Numbers found after dots are matched as identifiers.
         boolean isReference = false;
         Token last = tokens.isEmpty() ? null : tokens.get(tokens.size() - 1);
-        if (last != null && last.getType() == TokenType.OpDot) {
+        if (last != null && last.getType() == TokenType.OP_DOT) {
             isReference = true;
         }
 
         int length = match(intNumberRegex);
         if (length > 0) {
-            tokens.add(new Token(input.substring(current, current + length), isReference ? TokenType.Identifier : TokenType.IntNumber));
+            tokens.add(new Token(input.substring(current, current + length), isReference ? TokenType.IDENTIFIER : TokenType.INT_NUMBER));
             current += length;
             return true;
         }
@@ -576,7 +576,7 @@ final class Lexer {
             }
 
             if (input.charAt(position) == '"') {
-                tokens.add(new Token(input.substring(current + 1, position - 1), TokenType.String));
+                tokens.add(new Token(input.substring(current + 1, position - 1), TokenType.STRING));
                 current = position + 1;
                 return true;
             }
@@ -592,13 +592,13 @@ final class Lexer {
     {
         // Note: Do not match numbers after identifiers and dots.
         Token last = tokens.isEmpty() ? null : tokens.get(tokens.size() - 1);
-        if (last != null && (last.getType() == TokenType.Identifier || last.getType() == TokenType.OpDot)) {
+        if (last != null && (last.getType() == TokenType.IDENTIFIER || last.getType() == TokenType.OP_DOT)) {
             return false;
         }
 
         int length = match(floatNumberRegex);
         if (length > 0) {
-            tokens.add(new Token(input.substring(current, current + length), TokenType.FloatNumber));
+            tokens.add(new Token(input.substring(current, current + length), TokenType.FLOAT_NUMBER));
             current += length;
             return true;
         }
@@ -612,7 +612,7 @@ final class Lexer {
     private boolean color() {
         int length = match(colorRegex);
         if (length > 0) {
-            tokens.add(new Token(input.substring(current, current + length), TokenType.Color));
+            tokens.add(new Token(input.substring(current, current + length), TokenType.COLOR));
             current += length;
             return true;
         }
@@ -645,7 +645,7 @@ final class Lexer {
             }
 
             if (input.charAt(position) == '"') {
-                tokens.add(new Token(input.substring(current, position + 1), TokenType.Format));
+                tokens.add(new Token(input.substring(current, position + 1), TokenType.FORMAT));
                 current = position + 1;
                 return true;
             }
@@ -662,7 +662,7 @@ final class Lexer {
             return false;
         }
 
-        return matchToken("!", TokenType.Discard);
+        return matchToken("!", TokenType.DISCARD);
     }
 
     /**
@@ -690,7 +690,7 @@ final class Lexer {
             }
 
             if (input.charAt(position) == '"') {
-                tokens.add(new Token(input.substring(current, position + 1), TokenType.Culture));
+                tokens.add(new Token(input.substring(current, position + 1), TokenType.CULTURE));
                 current = position + 1;
                 return true;
             }
