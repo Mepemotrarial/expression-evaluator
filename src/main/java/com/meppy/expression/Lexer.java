@@ -1,4 +1,4 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +41,11 @@ final class Lexer {
 
 
     /**
+     * The options used to customize the lexical analysis.
+     */
+    private CompileOptions options;
+
+    /**
      * The sequence of recognized tokens.
      */
     private List<Token> tokens;
@@ -73,10 +78,18 @@ final class Lexer {
     /**
      * Initializes a new instance of the {@link Lexer} class.
      */
-    Lexer(String input, CompileOptions options) {
-        this.current = 0;
-        this.input = input;
+    Lexer(CompileOptions options) {
+        this.options = options;
+    }
 
+    /**
+     * Performs a lexical analysis of the specified string and returns a list of tokens.
+     * @param input The string to analyze.
+     * @return A list of {@link Token} objects.
+     */
+    List<Token> tokenize(String input) {
+        this.input = input;
+        this.current = 0;
         this.inExp = false;
         this.inFormat = false;
         this.inLocale = false;
@@ -84,128 +97,124 @@ final class Lexer {
         tokens = new ArrayList<>();
 
         while (current < input.length()) {
-            if (text()) {
-                continue;
-            }
-            if (ws()) {
-                continue;
-            }
-            if (osb()) {
-                continue;
-            }
-            if (csb()) {
-                continue;
-            }
-            if (ob()) {
-                continue;
-            }
-            if (cb()) {
-                continue;
-            }
-            if (nul()) {
-                continue;
-            }
-            if (identifier()) {
-                continue;
-            }
-            if (floatNumber()) {
-                continue;
-            }
-            if (intNumber()) {
-                continue;
-            }
-            if (color()) {
-                continue;
-            }
-            if (string()) {
-                continue;
-            }
-            if (opAdd()) {
-                continue;
-            }
-            if (opSubtract()) {
-                continue;
-            }
-            if (opMultiply()) {
-                continue;
-            }
-            if (opDivide()) {
-                continue;
-            }
-            if (opMod()) {
-                continue;
-            }
-            if (opLessOrEqual()) {
-                continue;
-            }
-            if (opGreaterOrEqual()) {
-                continue;
-            }
-            if (opNotEqual()) {
-                continue;
-            }
-            if (opLess()) {
-                continue;
-            }
-            if (opGreater()) {
-                continue;
-            }
-            if (opEqual()) {
-                continue;
-            }
-            if (!options.getInterpretExclamationAsReference() && opNot()) {
-                continue;
-            }
-            if (opConditionalAnd()) {
-                continue;
-            }
-            if (opAnd()) {
-                continue;
-            }
-            if (opConditionalOr()) {
-                continue;
-            }
-            if (opOr()) {
-                continue;
-            }
-            if (!options.getInterpretCircumflexAsPower()) {
-                if (opXor())
-                    continue;
-            } else {
-                if (opPower())
-                    continue;
-            }
-            if (options.getInterpretExclamationAsReference() && opReference()) {
-                continue;
-            }
-            if (opDot()) {
-                continue;
-            }
-            if (comma()) {
-                continue;
-            }
-            if (opFormat()) {
-                continue;
-            }
-            if (discard()) {
-                continue;
-            }
-            if (format()) {
-                continue;
-            }
-            if (opCulture()) {
-                continue;
-            }
-            if (culture()) {
-                continue;
-            }
-            if (opExpressionSeparator()) {
-                continue;
-            }
-
-            throw new IllegalArgumentException(String.format("Failed to recognize character '%1$s' at position %2$d within the input string '%3$s'.",
-                input.charAt(current), current, input));
+            tokenizeNext();
         }
+
+        return tokens;
+    }
+
+    private void tokenizeNext() {
+        if (text()) {
+            return;
+        }
+        if (ws()) {
+            return;
+        }
+        if (osb()) {
+            return;
+        }
+        if (csb()) {
+            return;
+        }
+        if (ob()) {
+            return;
+        }
+        if (cb()) {
+            return;
+        }
+        if (nul()) {
+            return;
+        }
+        if (identifier()) {
+            return;
+        }
+        if (number()) {
+            return;
+        }
+        if (color()) {
+            return;
+        }
+        if (string()) {
+            return;
+        }
+        if (opAdd()) {
+            return;
+        }
+        if (opSubtract()) {
+            return;
+        }
+        if (opMultiply()) {
+            return;
+        }
+        if (opDivide()) {
+            return;
+        }
+        if (opMod()) {
+            return;
+        }
+        if (opLessOrEqual()) {
+            return;
+        }
+        if (opGreaterOrEqual()) {
+            return;
+        }
+        if (opNotEqual()) {
+            return;
+        }
+        if (opLess()) {
+            return;
+        }
+        if (opGreater()) {
+            return;
+        }
+        if (opEqual()) {
+            return;
+        }
+        if (opNot()) {
+            return;
+        }
+        if (opConditionalAnd()) {
+            return;
+        }
+        if (opAnd()) {
+            return;
+        }
+        if (opConditionalOr()) {
+            return;
+        }
+        if (opOr()) {
+            return;
+        }
+        if (opPowerOrXor()) {
+            return;
+        }
+        if (opDot()) {
+            return;
+        }
+        if (comma()) {
+            return;
+        }
+        if (opFormat()) {
+            return;
+        }
+        if (discard()) {
+            return;
+        }
+        if (format()) {
+            return;
+        }
+        if (opCulture()) {
+            return;
+        }
+        if (culture()) {
+            return;
+        }
+        if (opExpressionSeparator()) {
+            return;
+        }
+
+        throw new IllegalArgumentException(String.format("Failed to recognize character '%1$s' at position %2$d within the input string '%3$s'.",
+            input.charAt(current), current, input));
     }
 
     /**
@@ -400,6 +409,17 @@ final class Lexer {
     }
 
     /**
+     * Recognizes the '^' symbol as either raising to power or xor, depending on the current settings.
+     */
+    private boolean opPowerOrXor() {
+        if (options.getInterpretCircumflexAsPower()) {
+            return opPower();
+        } else {
+            return opXor();
+        }
+    }
+
+    /**
      * Recognizes a bitwise or operator '^'.
      */
     private boolean opXor() {
@@ -425,13 +445,6 @@ final class Lexer {
      */
     private boolean opConditionalOr() {
         return matchToken("||", TokenType.OP_CONDITIONAL_OR);
-    }
-
-    /**
-     * Recognizes a reference operator '!'.
-     */
-    private boolean opReference() {
-        return matchToken("!", TokenType.OP_REFERENCE);
     }
 
     /**
@@ -466,7 +479,7 @@ final class Lexer {
     }
 
     private boolean opExpressionSeparator() {
-        if (match(";") || match(",")) {
+        if (match(";")) {
             tokens.add(new Token(input.substring(current, current + 1), TokenType.OP_EXPRESSION_SEPARATOR));
             current++;
             return true;
@@ -515,27 +528,6 @@ final class Lexer {
     }
 
     /**
-     * Recognizes an integer number.
-     */
-    private boolean intNumber() {
-        // Note: Numbers found after dots are matched as identifiers.
-        boolean isReference = false;
-        Token last = tokens.isEmpty() ? null : tokens.get(tokens.size() - 1);
-        if (last != null && last.getType() == TokenType.OP_DOT) {
-            isReference = true;
-        }
-
-        int length = match(intNumberRegex);
-        if (length > 0) {
-            tokens.add(new Token(input.substring(current, current + length), isReference ? TokenType.IDENTIFIER : TokenType.INT_NUMBER));
-            current += length;
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Recognizes a 'null' keyword.
      */
     private boolean nul() {
@@ -576,7 +568,7 @@ final class Lexer {
             }
 
             if (input.charAt(position) == '"') {
-                tokens.add(new Token(input.substring(current + 1, position - 1), TokenType.STRING));
+                tokens.add(new Token(input.substring(current + 1, position), TokenType.STRING));
                 current = position + 1;
                 return true;
             }
@@ -586,10 +578,9 @@ final class Lexer {
     }
 
     /**
-     * Recognizes a float number.
+     * Recognizes a number.
      */
-    private boolean floatNumber()
-    {
+    private boolean number() {
         // Note: Do not match numbers after identifiers and dots.
         Token last = tokens.isEmpty() ? null : tokens.get(tokens.size() - 1);
         if (last != null && (last.getType() == TokenType.IDENTIFIER || last.getType() == TokenType.OP_DOT)) {
@@ -598,8 +589,15 @@ final class Lexer {
 
         int length = match(floatNumberRegex);
         if (length > 0) {
-            tokens.add(new Token(input.substring(current, current + length), TokenType.FLOAT_NUMBER));
-            current += length;
+            // Check if its an integer number
+            int length2 = match(intNumberRegex);
+            if (length2 == length) {
+                tokens.add(new Token(input.substring(current, current + length), TokenType.INT_NUMBER));
+                current += length;
+            } else {
+                tokens.add(new Token(input.substring(current, current + length), TokenType.FLOAT_NUMBER));
+                current += length;
+            }
             return true;
         }
 
@@ -697,12 +695,5 @@ final class Lexer {
 
             position++;
         }
-    }
-
-    /**
-     * Gets the list of tokens produced by the lexer.
-     */
-    List<Token> getTokens() {
-        return tokens;
     }
 }

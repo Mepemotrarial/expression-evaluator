@@ -1,14 +1,9 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 /**
- * Thrown during the evaluation of an expression. For example, this exception is thrown when
- * calling a method with insufficient number of arguments.
+ * Thrown during the evaluation of an expression. For example, this exception is thrown when calling a method with insufficient number of arguments.
  */
 public final class EvaluationException extends RuntimeException {
-    public EvaluationException() {
-        super();
-    }
-
     public EvaluationException(String message) {
         super(message);
     }

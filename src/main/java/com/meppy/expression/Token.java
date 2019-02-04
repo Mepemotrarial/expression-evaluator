@@ -1,4 +1,4 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 /**
  * Represents a recognized token from a sequence of characters, which conforms to the grammar.

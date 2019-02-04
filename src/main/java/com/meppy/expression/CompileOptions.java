@@ -1,33 +1,31 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 /**
  * Contains options for the {@link Compiler#compile} method.
  */
 public class CompileOptions {
     private final boolean normalize;
-    private final boolean interpretExclamationAsReference;
     private final boolean interpretCircumflexAsPower;
 
     /**
      * Initializes a new instance of the {@link CompileOptions} class.
      */
     public CompileOptions() {
-        this(true, false, false);
+        this(true, false);
     }
 
     /**
      * Initializes a new instance of the {@link CompileOptions} class.
      */
     public CompileOptions(boolean normalize) {
-        this(normalize, false, false);
+        this(normalize, false);
     }
 
     /**
      * Initializes a new instance of the {@link CompileOptions} class.
      */
-    public CompileOptions(boolean normalize, boolean interpretExclamationAsReference, boolean interpretCircumflexAsPower) {
+    public CompileOptions(boolean normalize, boolean interpretCircumflexAsPower) {
         this.normalize = normalize;
-        this.interpretExclamationAsReference = interpretExclamationAsReference;
         this.interpretCircumflexAsPower = interpretCircumflexAsPower;
     }
 
@@ -36,13 +34,6 @@ public class CompileOptions {
      */
     public boolean getNormalize() {
         return normalize;
-    }
-
-    /**
-     * Gets a value indicating whether exclamation marks (!) are interpreted as references, rather than NOT.
-     */
-    public boolean getInterpretExclamationAsReference() {
-        return interpretExclamationAsReference;
     }
 
     /**

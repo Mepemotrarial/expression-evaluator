@@ -1,4 +1,4 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 /**
  * Specifies the type of a token.
@@ -68,8 +68,6 @@ enum TokenType {
     OP_CONDITIONAL_OR,
     /** Indicates a member access operator. */
     OP_DOT,
-    /** Indicates a reference operator. */
-    OP_REFERENCE,
     /** Indicates a comma. */
     COMMA,
     /** Indicates a formatting operator. */

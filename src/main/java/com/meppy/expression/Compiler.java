@@ -1,4 +1,4 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 /**
  * Provides methods for compiling expressions to byte code.
@@ -38,8 +38,8 @@ public final class Compiler {
     public static ByteCode compile(String source, CompileOptions options) {
         String expression = options.getNormalize() ? normalize(source) : source;
 
-        Lexer lexer = new Lexer(expression, options);
-        Parser parser = new Parser(lexer.getTokens());
+        Lexer lexer = new Lexer(options);
+        Parser parser = new Parser(lexer.tokenize(expression));
         return new ByteCode(parser.parse());
     }
 

@@ -1,19 +1,18 @@
-package com.meppy.expressions.test;
+package com.meppy.expression.test;
 
-import com.meppy.expressions.ByteCode;
-import com.meppy.expressions.CompileOptions;
-import com.meppy.expressions.Compiler;
-import com.meppy.expressions.EvaluationContext;
-import com.meppy.expressions.FunctionEvaluationResult;
+import com.meppy.expression.ByteCode;
+import com.meppy.expression.CompileOptions;
+import com.meppy.expression.Compiler;
+import com.meppy.expression.EvaluationContext;
+import com.meppy.expression.FunctionEvaluationResult;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
 public final class Test {
-    public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException {
+    public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
         ByteCode cc = Compiler.compile("The distance between points [a] and [b] is [Sqrt(Pow(a.X - b.X) + Pow(a.Y - b.Y))].", false);
         EvaluationContext ec = new EvaluationContext(null);
@@ -65,7 +64,7 @@ public final class Test {
         }
     }
 
-    private static void execute(ByteCode code, EvaluationContext context, String message) throws InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException {
+    private static void execute(ByteCode code, EvaluationContext context, String message) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         long time = System.currentTimeMillis();
         for (int i = 0; i < 1_000_000; i++) {
             code.evaluate(context);

@@ -1,4 +1,4 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 /**
  * Encapsulates the result of a custom function evaluation.

@@ -1,4 +1,4 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,12 +6,10 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -25,8 +23,8 @@ public class EvaluationContext {
     private final Object target;
 
     /**
-     * The locale associated with the context. This locale is used when formatting a value using
-     * the formatting specifier ('@') and no locale is specified.
+     * The locale associated with the context. This locale is used when formatting
+     * a value using the formatting specifier ('@') and no locale is specified.
      */
     private final Locale locale;
 
@@ -41,8 +39,7 @@ public class EvaluationContext {
     private Dictionary<String, Object> localVars;
 
     /**
-     * Called when a function name cannot be recognized as one of the built-in functions
-     * to allow clients to evaluate the function.
+     * Called when a function name is not recognized as one of the built-in functions to allow clients to evaluate the function.
      */
     private final BiFunction<String, Object[], FunctionEvaluationResult> dispatchFunctionCall;
 
@@ -96,59 +93,59 @@ public class EvaluationContext {
      */
     public int getFunctionParamCount(String name) {
         switch (name) {
-            case "Now":
-            case "E":
-            case "PI":
-            case "Today":
+            case "now":
+            case "e":
+            case "pi":
+            case "today":
                 return 0;
-            case "Abs":
-            case "Asc":
-            case "Atn":
-            case "Chr":
-            case "CBool":
-            case "CDate":
-            case "CDbl":
-            case "CInt":
-            case "CLong":
-            case "CSng":
-            case "CStr":
-            case "Cos":
-            case "Acos":
-            case "Exp":
-            case "Int":
-            case "IsNull":
-            case "IsNumeric":
-            case "LCase":
-            case "Len":
-            case "Log":
-            case "Pow":
-            case "Rnd":
-            case "Sgn":
-            case "Sin":
-            case "Asin":
-            case "Space":
-            case "Sqr":
-            case "Sqrt":
-            case "Str":
-            case "StrReverse":
-            case "Tan":
-            case "Trim":
-            case "UCase":
-            case "TypeOf":
-            case "Round":
+            case "abs":
+            case "asc":
+            case "atn":
+            case "chr":
+            case "cbool":
+            case "cdate":
+            case "cdbl":
+            case "cint":
+            case "clong":
+            case "csng":
+            case "cstr":
+            case "cos":
+            case "acos":
+            case "exp":
+            case "int":
+            case "isNull":
+            case "isNumeric":
+            case "lcase":
+            case "len":
+            case "log":
+            case "pow":
+            case "rnd":
+            case "sgn":
+            case "sin":
+            case "asin":
+            case "space":
+            case "sqr":
+            case "sqrt":
+            case "str":
+            case "strReverse":
+            case "tan":
+            case "trim":
+            case "ucase":
+            case "typeOf":
+            case "round":
                 return 1;
-            case "InStr":
-            case "InStrRev":
-            case "Left":
-            case "Right":
-            case "StrComp":
-            case "String":
-            case "Min":
-            case "Max":
+            case "inStr":
+            case "inStrRev":
+            case "left":
+            case "right":
+            case "strComp":
+            case "string":
+            case "min":
+            case "max":
                 return 2;
-            case "IIf":
-            case "Mid":
-            case "Replace":
+            case "iif":
+            case "mid":
+            case "replace":
                 return 3;
             default:
                 break;
@@ -173,111 +170,111 @@ public class EvaluationContext {
         }
 
         switch (name) {
-            case "Now":
-                return functions.Now();
-            case "E":
-                return functions.E();
-            case "PI":
-                return functions.PI();
-            case "Today":
-                return functions.Today();
-            case "Abs":
-                return functions.Abs(getDouble(p[0]));
-            case "Asc":
-                return functions.Asc(getString(p[0]));
-            case "Atn":
-                return functions.Atn(getDouble(p[0]));
-            case "Chr":
-                return functions.Chr(getInt(p[0]));
-            case "CBool":
-                return functions.CBool(p[0]);
-            case "CDate":
-                return functions.CDate(p[0]);
-            case "CDbl":
-                return functions.CDbl(p[0]);
-            case "CInt":
-                return functions.CInt(p[0]);
-            case "CLong":
-                return functions.CLong(p[0]);
-            case "CSng":
-                return functions.CSng(p[0]);
-            case "CStr":
-                return functions.CStr(p[0]);
-            case "Cos":
-                return functions.Cos(getDouble(p[0]));
-            case "Acos":
-                return functions.Acos(getDouble(p[0]));
-            case "Exp":
-                return functions.Exp(getDouble(p[0]));
-            case "Int":
-                return functions.Int(getDouble(p[0]));
-            case "IsNull":
-                return functions.IsNull(p[0]);
-            case "IsNumeric":
-                return functions.IsNumeric(p[0]);
-            case "LCase":
-                return functions.LCase(getString(p[0]));
-            case "Len":
-                return functions.Len(getString(p[0]));
-            case "Log":
-                return functions.Log(getDouble(p[0]));
-            case "Pow": {
+            case "now":
+                return functions.now();
+            case "e":
+                return functions.e();
+            case "pi":
+                return functions.pi();
+            case "today":
+                return functions.today();
+            case "abs":
+                return functions.abs(getDouble(p[0]));
+            case "asc":
+                return functions.asc(getString(p[0]));
+            case "atn":
+                return functions.atn(getDouble(p[0]));
+            case "chr":
+                return functions.chr(getInt(p[0]));
+            case "cbool":
+                return functions.cbool(p[0]);
+            case "cdate":
+                return functions.cdate(p[0]);
+            case "cdbl":
+                return functions.cdbl(p[0]);
+            case "cint":
+                return functions.cint(p[0]);
+            case "clong":
+                return functions.clong(p[0]);
+            case "csng":
+                return functions.csng(p[0]);
+            case "cstr":
+                return functions.cstr(p[0]);
+            case "cos":
+                return functions.cos(getDouble(p[0]));
+            case "acos":
+                return functions.acos(getDouble(p[0]));
+            case "exp":
+                return functions.exp(getDouble(p[0]));
+            case "int":
+                return functions.integer(getDouble(p[0]));
+            case "isNull":
+                return functions.isNull(p[0]);
+            case "isNumeric":
+                return functions.isNumeric(p[0]);
+            case "lcase":
+                return functions.lcase(getString(p[0]));
+            case "len":
+                return functions.len(getString(p[0]));
+            case "log":
+                return functions.log(getDouble(p[0]));
+            case "pow": {
                 double a = getDouble(p[0]);
                 double b = 2;
                 if (p.length > 1) {
                     b = getDouble(p[1]);
                 }
-                return functions.Pow(a, b);
+                return functions.pow(a, b);
             }
-            case "Rnd":
-                return functions.Rnd(getInt(p[0]));
-            case "Sgn":
-                return functions.Sgn(getDouble(p[0]));
-            case "Sin":
-                return functions.Sin(getDouble(p[0]));
-            case "Asin":
-                return functions.Asin(getDouble(p[0]));
-            case "Space":
-                return functions.Space(getInt(p[0]));
-            case "Sqr":
-                return functions.Sqr(getDouble(p[0]));
-            case "Sqrt":
-                return functions.Sqrt(getDouble(p[0]));
-            case "Str":
-                return functions.Str(getDouble(p[0]));
-            case "StrReverse":
-                return functions.StrReverse(getString(p[0]));
-            case "Tan":
-                return functions.Tan(getDouble(p[0]));
-            case "Trim":
-                return functions.Trim(getString(p[0]));
-            case "UCase":
-                return functions.UCase(getString(p[0]));
-            case "InStr":
-                return functions.InStr(getString(p[0]), getString(p[1]));
-            case "InStrRev":
-                return functions.InStrRev(getString(p[0]), getString(p[1]));
-            case "Left":
-                return functions.Left(getString(p[0]), getInt(p[1]));
-            case "Right":
-                return functions.Right(getString(p[0]), getInt(p[1]));
-            case "Round":
-                return functions.Round(getDouble(p[0]));
-            case "StrComp":
-                return functions.StrComp(getString(p[0]), getString(p[1]));
-            case "String":
-                return functions.String(getInt(p[0]), getInt(p[1]));
-            case "IIf":
-                return functions.IIf(getBool(p[0]), p[1], p[2]);
-            case "Mid":
-                return functions.Mid(getString(p[0]), getInt(p[1]), getInt(p[2]));
-            case "Replace":
-                return functions.Replace(getString(p[0]), getString(p[1]), getString(p[2]));
-            case "TypeOf":
-                return functions.TypeOf(p[0]);
-            case "Min":
+            case "rnd":
+                return functions.rnd(getInt(p[0]));
+            case "sgn":
+                return functions.sgn(getDouble(p[0]));
+            case "sin":
+                return functions.sin(getDouble(p[0]));
+            case "asin":
+                return functions.asin(getDouble(p[0]));
+            case "space":
+                return functions.space(getInt(p[0]));
+            case "sqr":
+                return functions.sqr(getDouble(p[0]));
+            case "sqrt":
+                return functions.sqrt(getDouble(p[0]));
+            case "str":
+                return functions.str(getDouble(p[0]));
+            case "strReverse":
+                return functions.strReverse(getString(p[0]));
+            case "tan":
+                return functions.tan(getDouble(p[0]));
+            case "trim":
+                return functions.trim(getString(p[0]));
+            case "ucase":
+                return functions.ucase(getString(p[0]));
+            case "inStr":
+                return functions.inStr(getString(p[0]), getString(p[1]));
+            case "inStrRev":
+                return functions.inStrRev(getString(p[0]), getString(p[1]));
+            case "left":
+                return functions.left(getString(p[0]), getInt(p[1]));
+            case "right":
+                return functions.right(getString(p[0]), getInt(p[1]));
+            case "round":
+                return functions.round(getDouble(p[0]));
+            case "strComp":
+                return functions.strComp(getString(p[0]), getString(p[1]));
+            case "string":
+                return functions.string(getInt(p[0]), getInt(p[1]));
+            case "iif":
+                return functions.iif(getBool(p[0]), p[1], p[2]);
+            case "mid":
+                return functions.mid(getString(p[0]), getInt(p[1]), getInt(p[2]));
+            case "replace":
+                return functions.replace(getString(p[0]), getString(p[1]), getString(p[2]));
+            case "typeOf":
+                return functions.typeOf(p[0]);
+            case "min":
                 return Math.min(getDouble(p[0]), getDouble(p[1]));
-            case "Max":
+            case "max":
                 return Math.max(getDouble(p[0]), getDouble(p[1]));
             default:
                 break;
@@ -296,29 +293,29 @@ public class EvaluationContext {
     /**
      * Returns the specified value as a boolean.
      */
-    private boolean getBool(Object value) {
-        return functions.CBool(value);
+    protected final boolean getBool(Object value) {
+        return functions.cbool(value);
     }
 
     /**
      * Returns the specified value as an integer.
      */
-    private int getInt(Object value) {
-        return functions.CInt(value);
+    protected final int getInt(Object value) {
+        return functions.cint(value);
     }
 
     /**
      * Returns the specified value as a double.
      */
-    private double getDouble(Object value) {
-        return functions.CDbl(value);
+    protected final double getDouble(Object value) {
+        return functions.cdbl(value);
     }
 
     /**
      * Returns the specified value as a string.
      */
-    private String getString(Object value) {
-        return functions.CStr(value);
+    protected final String getString(Object value) {
+        return functions.cstr(value);
     }
 
     /**
@@ -327,22 +324,22 @@ public class EvaluationContext {
      * @return The result of the evaluation.
      */
     protected Object evaluateIdentifier(String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        if (StringUtils.isNullOrEmpty(name))
+        if (StringUtils.isNullOrEmpty(name)) {
+            throw new EvaluationException("Identifier cannot be null or empty.");
+        }
+        if (StringUtils.equalsIgnoreCase(name, "null")) {
             return null;
-
-        Object obj = findObject(name);
-        if (obj != null)
-            return obj;
-
-        if ("true".compareToIgnoreCase(name) == 0) {
-            return true;
-        } else if ("false".compareToIgnoreCase(name) == 0) {
-            return false;
         }
 
-        Object value = localVars.get(name);
-        if (value != null) {
-            return value;
+        Object obj = findObject(name);
+        if (obj != null) {
+            return obj;
+        }
+
+        if (StringUtils.equalsIgnoreCase(name, "true")) {
+            return true;
+        } else if (StringUtils.equalsIgnoreCase(name, "false")) {
+            return false;
         }
 
         // Attempt to resolve the specified identifier as a property on the underlying object
@@ -370,7 +367,7 @@ public class EvaluationContext {
      * @return The value of the member.
      */
     protected Object evaluateMember(Object target, String name, boolean last) {
-        return null;
+        throw new EvaluationException(String.format("The member '%1$s' could not be found on the target '%2$s'", name, target));
     }
 
     /**
@@ -381,16 +378,6 @@ public class EvaluationContext {
      * @return The found object.
      */
     protected Object resolveObject(String name) {
-        return null;
-    }
-
-    /**
-     * Returns the object representing the specified reference.
-     * @param target The name of the object.
-     * @param fields A sequence of fields contained in the reference.
-     * @return The resolved object.
-     */
-    protected Object resolveReference(String target, Collection<String> fields) {
         return null;
     }
 
@@ -446,7 +433,7 @@ public class EvaluationContext {
      * Finds the object with the specified name. For example, 'this' yields the underlying target.
      */
     private Object findObject(String objectName) {
-        if (Objects.equals(objectName, "this")) {
+        if (StringUtils.equalsIgnoreCase(objectName, "this")) {
             return target;
         }
 
@@ -462,16 +449,16 @@ public class EvaluationContext {
     /**
      * Creates a {@link MemberInfo} object representing a property with the specified name on the specified object.
      */
-    MemberInfo createMemberInfo(String objectName, String propertyName) throws NoSuchMethodException {
+    MemberInfo createMemberInfo(String objectName, String propertyName) {
         Object targetObject = findObject(objectName);
 
         if (targetObject == null && target != null) {
             // Attempt to resolve the specified identifier as a property on the underlying object
             try {
-                Method propertyGetter = target.getClass().getMethod("get" + propertyName);
+                Method propertyGetter = target.getClass().getMethod("get" + objectName);
                 targetObject = propertyGetter.invoke(target);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                // TODO:
+                throw new EvaluationException(String.format("Could not resolve '%1$s'.", objectName), e);
             }
         }
 
@@ -482,10 +469,10 @@ public class EvaluationContext {
         return new MemberInfo(targetObject, propertyName, this);
     }
 
-    /// <summary>
-    /// Creates a MemberInfo object representing a property with the
-    /// specified name on the object represented by the specified MemberInfo.
-    /// </summary>
+    /**
+     * Creates a {@link MemberInfo} object representing a property with the specified name
+     * on the object represented by the specified {@link MemberInfo}.
+     */
     MemberInfo createMemberInfo(MemberInfo info, String propertyName) {
         return new MemberInfo(info, propertyName, this);
     }

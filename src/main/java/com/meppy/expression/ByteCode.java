@@ -1,10 +1,9 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
 import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -75,8 +74,6 @@ public final class ByteCode {
         CONDITIONAL_OR,
         /** Indicates a member access operation. */
         DOT,
-        /** Indicates a reference operation. */
-        REFERENCE,
         /** Indicates a formatting specifier. */
         FORMAT,
         /** Indicates a culture specifier. */
@@ -126,35 +123,25 @@ public final class ByteCode {
         /**
          * Promotes the specified value to the specified type.
          */
-        private static Object convertValue(Object value, Class<?> type) throws ParseException {
-            if (value == null) {
-                return null;
-            }
-
+        private static Object promoteValue(Object value, Class<?> type) {
             if (type == value.getClass()) {
                 return value;
             }
 
             if (value instanceof Boolean) {
-                return convertBoolean((Boolean)value, type);
+                return promoteBoolean((Boolean)value, type);
             } else if (value instanceof Number) {
-                return convertNumber((Number)value, type);
+                return promoteNumber((Number)value, type);
             } else if (value instanceof Date) {
-                return convertDate((Date)value, type);
-            } else if (value instanceof String) {
-                return convertString((String)value, type);
+                return promoteDate((Date)value, type);
             }
 
-            return value;
+            throw new EvaluationException(String.format("Cannot convert value %1$s to type %2$s.", value, type.getName()));
         }
 
-        private static Object convertBoolean(Boolean value, Class<?> type) {
+        private static Object promoteBoolean(Boolean value, Class<?> type) {
             int intValue = value ? 1 : 0;
-            if (type == Byte.class) {
-                return (byte)intValue;
-            } else if (type == Short.class) {
-                return (short)intValue;
-            } else if (type == Integer.class) {
+            if (type == Integer.class) {
                 return intValue;
             } else if (type == Long.class) {
                 return (long)intValue;
@@ -168,15 +155,11 @@ public final class ByteCode {
                 return value.toString();
             }
 
-            return value;
+            throw new EvaluationException(String.format("Cannot convert boolean value %1$b to type %2$s.", value, type.getName()));
         }
 
-        private static Object convertNumber(Number value, Class<?> type) {
-            if (type == Byte.class) {
-                return value.byteValue();
-            } else if (type == Short.class) {
-                return value.shortValue();
-            } else if (type == Integer.class) {
+        private static Object promoteNumber(Number value, Class<?> type) {
+            if (type == Integer.class) {
                 return value.intValue();
             } else if (type == Long.class) {
                 return value.longValue();
@@ -190,53 +173,16 @@ public final class ByteCode {
                 return value.toString();
             }
 
-            return value;
+            throw new EvaluationException(String.format("Cannot convert numeric value %1$s to type %2$s.", value, type.getName()));
         }
 
-        private static Object convertDate(Date value, Class<?> type) {
-            long millis = value.getTime();
-            if (type == Byte.class) {
-                return (byte)millis;
-            } else if (type == Short.class) {
-                return (short)millis;
-            } else if (type == Integer.class) {
-                return (int)millis;
-            } else if (type == Long.class) {
-                return millis;
-            } else if (type == Float.class) {
-                return (float)millis;
-            } else if (type == Double.class) {
-                return (double)millis;
-            } else if (type == Date.class) {
-                return new Date(millis);
-            } else if (type == String.class) {
+        private static Object promoteDate(Date value, Class<?> type) {
+            // Date can only be promoted to string
+            if (type == String.class) {
                 return value.toString();
             }
 
-            return value;
-        }
-
-        private static Object convertString(String value, Class<?> type) throws ParseException {
-            if (type == Byte.class) {
-                return Byte.parseByte(value);
-            } else if (type == Short.class) {
-                return Short.parseShort(value);
-            } else if (type == Integer.class) {
-                return Integer.parseInt(value);
-            } else if (type == Long.class) {
-                return Long.parseLong(value);
-            } else if (type == Float.class) {
-                return Float.parseFloat(value);
-            } else if (type == Double.class) {
-                return Double.parseDouble(value);
-            } else if (type == Date.class) {
-                DateFormat dateFormat = DateFormat.getDateTimeInstance();
-                return dateFormat.parse(value);
-            } else if (type == String.class) {
-                return value;
-            }
-
-            return value;
+            throw new EvaluationException(String.format("Cannot convert Date value %1$s to type %2$s.", value, type.getName()));
         }
 
         /**
@@ -267,14 +213,14 @@ public final class ByteCode {
                 }
             }
 
-            throw new UnsupportedOperationException(
+            throw new EvaluationException(
                 String.format("The operator %1$s cannot be applied to operand of type '%2$s'.", op, a.getClass().getName()));
         }
 
         /**
          * Performs the specified operation on the specified arguments.
          */
-        static Object apply(Object a, Object b, Op op) throws ParseException {
+        static Object apply(Object a, Object b, Op op) {
             if (a == null || b == null) {
                 if (op == Op.EQUAL) {
                     return a == b;
@@ -299,16 +245,18 @@ public final class ByteCode {
                 greater = bClass;
             }
 
+            int greaterPriority = Math.max(aPriority, bPriority);
+            if (greaterPriority == typePriority.get(Byte.class) || greaterPriority == typePriority.get(Short.class)) {
+                // Automatically promote byte and short to int; Binary operations between bytes and shorts in Java produce ints anyway
+                greater = Integer.class;
+            }
+
             // Promote both objects to the greater type
-            a = convertValue(a, greater);
-            b = convertValue(b, greater);
+            a = promoteValue(a, greater);
+            b = promoteValue(b, greater);
 
             if (greater == Boolean.class) {
                 return apply((Boolean) a, (Boolean) b, op);
-            } else if (greater == Byte.class) {
-                return apply((Byte) a, (Byte) b, op);
-            } else if (greater == Short.class) {
-                return apply((Short) a, (Short) b, op);
             } else if (greater == Integer.class) {
                 return apply((Integer) a, (Integer) b, op);
             } else if (greater == Long.class) {
@@ -317,6 +265,8 @@ public final class ByteCode {
                 return apply((Float) a, (Float) b, op);
             } else if (greater == Double.class) {
                 return apply((Double) a, (Double) b, op);
+            } else if (greater == Date.class) {
+                return apply((Date) a, (Date) b, op);
             } else if (greater == String.class) {
                 return apply((String) a, (String) b, op);
             }
@@ -329,144 +279,22 @@ public final class ByteCode {
          */
         private static Object apply(Boolean a, Boolean b, Op op) {
             switch (op) {
-                case CONDITIONAL_AND: {
+                case CONDITIONAL_AND:
                     return a && b;
-                }
-                case CONDITIONAL_OR: {
+                case CONDITIONAL_OR:
                     return a || b;
-                }
-                case LESS: {
+                case LESS:
                     return a.compareTo(b) < 0;
-                }
-                case GREATER: {
+                case GREATER:
                     return a.compareTo(b) > 0;
-                }
-                case EQUAL: {
+                case EQUAL:
                     return a.compareTo(b) == 0;
-                }
-                case NOT_EQUAL: {
+                case NOT_EQUAL:
                     return a.compareTo(b) != 0;
-                }
-                case LESS_OR_EQUAL: {
+                case LESS_OR_EQUAL:
                     return a.compareTo(b) <= 0;
-                }
-                case GREATER_OR_EQUAL: {
+                case GREATER_OR_EQUAL:
                     return a.compareTo(b) >= 0;
-                }
-                default:
-                    break;
-            }
-
-            throw new EvaluationException(String.format(EXCEPTION_MESSAGE, op, a.getClass().getName(), b.getClass().getName()));
-        }
-
-        /**
-         * Performs the specified operation on the specified arguments.
-         */
-        private static Object apply(Byte a, Byte b, Op op) {
-            switch (op) {
-                case ADD: {
-                    return a + b;
-                }
-                case SUB: {
-                    return a - b;
-                }
-                case MUL: {
-                    return a * b;
-                }
-                case DIV: {
-                    return a / b;
-                }
-                case MOD: {
-                    return a % b;
-                }
-                case POWER: {
-                    return Math.pow(a, b);
-                }
-                case LESS: {
-                    return a.compareTo(b) < 0;
-                }
-                case GREATER: {
-                    return a.compareTo(b) > 0;
-                }
-                case EQUAL: {
-                    return a.compareTo(b) == 0;
-                }
-                case NOT_EQUAL: {
-                    return a.compareTo(b) != 0;
-                }
-                case LESS_OR_EQUAL: {
-                    return a.compareTo(b) <= 0;
-                }
-                case GREATER_OR_EQUAL: {
-                    return a.compareTo(b) >= 0;
-                }
-                case AND: {
-                    return a & b;
-                }
-                case XOR: {
-                    return a ^ b;
-                }
-                case OR: {
-                    return a | b;
-                }
-                default:
-                    break;
-            }
-
-            throw new EvaluationException(String.format(EXCEPTION_MESSAGE, op, a.getClass().getName(), b.getClass().getName()));
-        }
-
-        /**
-         * Performs the specified operation on the specified arguments.
-         */
-        private static Object apply(Short a, Short b, Op op) {
-            switch (op) {
-                case ADD: {
-                    return a + b;
-                }
-                case SUB: {
-                    return a - b;
-                }
-                case MUL: {
-                    return a * b;
-                }
-                case DIV: {
-                    return a / b;
-                }
-                case MOD: {
-                    return a % b;
-                }
-                case POWER: {
-                    return Math.pow(a, b);
-                }
-                case LESS: {
-                    return a.compareTo(b) < 0;
-                }
-                case GREATER: {
-                    return a.compareTo(b) > 0;
-                }
-                case EQUAL: {
-                    return a.compareTo(b) == 0;
-                }
-                case NOT_EQUAL: {
-                    return a.compareTo(b) != 0;
-                }
-                case LESS_OR_EQUAL: {
-                    return a.compareTo(b) <= 0;
-                }
-                case GREATER_OR_EQUAL: {
-                    return a.compareTo(b) >= 0;
-                }
-                case AND: {
-                    return a & b;
-                }
-                case XOR: {
-                    return a ^ b;
-                }
-                case OR: {
-                    return a | b;
-                }
                 default:
                     break;
             }
@@ -479,51 +307,36 @@ public final class ByteCode {
          */
         private static Object apply(Integer a, Integer b, Op op) {
             switch (op) {
-                case ADD: {
+                case ADD:
                     return a + b;
-                }
-                case SUB: {
+                case SUB:
                     return a - b;
-                }
-                case MUL: {
+                case MUL:
                     return a * b;
-                }
-                case DIV: {
+                case DIV:
                     return a / b;
-                }
-                case MOD: {
+                case MOD:
                     return a % b;
-                }
-                case POWER: {
+                case POWER:
                     return Math.pow(a, b);
-                }
-                case LESS: {
+                case LESS:
                     return a.compareTo(b) < 0;
-                }
-                case GREATER: {
+                case GREATER:
                     return a.compareTo(b) > 0;
-                }
-                case EQUAL: {
+                case EQUAL:
                     return a.compareTo(b) == 0;
-                }
-                case NOT_EQUAL: {
+                case NOT_EQUAL:
                     return a.compareTo(b) != 0;
-                }
-                case LESS_OR_EQUAL: {
+                case LESS_OR_EQUAL:
                     return a.compareTo(b) <= 0;
-                }
-                case GREATER_OR_EQUAL: {
+                case GREATER_OR_EQUAL:
                     return a.compareTo(b) >= 0;
-                }
-                case AND: {
+                case AND:
                     return a & b;
-                }
-                case XOR: {
+                case XOR:
                     return a ^ b;
-                }
-                case OR: {
+                case OR:
                     return a | b;
-                }
                 default:
                     break;
             }
@@ -536,51 +349,36 @@ public final class ByteCode {
          */
         private static Object apply(Long a, Long b, Op op) {
             switch (op) {
-                case ADD: {
+                case ADD:
                     return a + b;
-                }
-                case SUB: {
+                case SUB:
                     return a - b;
-                }
-                case MUL: {
+                case MUL:
                     return a * b;
-                }
-                case DIV: {
+                case DIV:
                     return a / b;
-                }
-                case MOD: {
+                case MOD:
                     return a % b;
-                }
-                case POWER: {
+                case POWER:
                     return Math.pow(a, b);
-                }
-                case LESS: {
+                case LESS:
                     return a.compareTo(b) < 0;
-                }
-                case GREATER: {
+                case GREATER:
                     return a.compareTo(b) > 0;
-                }
-                case EQUAL: {
+                case EQUAL:
                     return a.compareTo(b) == 0;
-                }
-                case NOT_EQUAL: {
+                case NOT_EQUAL:
                     return a.compareTo(b) != 0;
-                }
-                case LESS_OR_EQUAL: {
+                case LESS_OR_EQUAL:
                     return a.compareTo(b) <= 0;
-                }
-                case GREATER_OR_EQUAL: {
+                case GREATER_OR_EQUAL:
                     return a.compareTo(b) >= 0;
-                }
-                case AND: {
+                case AND:
                     return a & b;
-                }
-                case XOR: {
+                case XOR:
                     return a ^ b;
-                }
-                case OR: {
+                case OR:
                     return a | b;
-                }
                 default:
                     break;
             }
@@ -593,42 +391,30 @@ public final class ByteCode {
          */
         private static Object apply(Float a, Float b, Op op) {
             switch (op) {
-                case ADD: {
+                case ADD:
                     return a + b;
-                }
-                case SUB: {
+                case SUB:
                     return a - b;
-                }
-                case MUL: {
+                case MUL:
                     return a * b;
-                }
-                case DIV: {
+                case DIV:
                     return a / b;
-                }
-                case MOD: {
+                case MOD:
                     return a % b;
-                }
-                case POWER: {
+                case POWER:
                     return Math.pow(a, b);
-                }
-                case LESS: {
+                case LESS:
                     return a.compareTo(b) < 0;
-                }
-                case GREATER: {
+                case GREATER:
                     return a.compareTo(b) > 0;
-                }
-                case EQUAL: {
+                case EQUAL:
                     return a.compareTo(b) == 0;
-                }
-                case NOT_EQUAL: {
+                case NOT_EQUAL:
                     return a.compareTo(b) != 0;
-                }
-                case LESS_OR_EQUAL: {
+                case LESS_OR_EQUAL:
                     return a.compareTo(b) <= 0;
-                }
-                case GREATER_OR_EQUAL: {
+                case GREATER_OR_EQUAL:
                     return a.compareTo(b) >= 0;
-                }
                 default:
                     break;
             }
@@ -641,42 +427,58 @@ public final class ByteCode {
          */
         private static Object apply(Double a, Double b, Op op) {
             switch (op) {
-                case ADD: {
+                case ADD:
                     return a + b;
-                }
-                case SUB: {
+                case SUB:
                     return a - b;
-                }
-                case MUL: {
+                case MUL:
                     return a * b;
-                }
-                case DIV: {
+                case DIV:
                     return a / b;
-                }
-                case MOD: {
+                case MOD:
                     return a % b;
-                }
-                case POWER: {
+                case POWER:
                     return Math.pow(a, b);
-                }
-                case LESS: {
+                case LESS:
                     return a.compareTo(b) < 0;
-                }
-                case GREATER: {
+                case GREATER:
                     return a.compareTo(b) > 0;
-                }
-                case EQUAL: {
+                case EQUAL:
                     return a.compareTo(b) == 0;
-                }
-                case NOT_EQUAL: {
+                case NOT_EQUAL:
                     return a.compareTo(b) != 0;
-                }
-                case LESS_OR_EQUAL: {
+                case LESS_OR_EQUAL:
                     return a.compareTo(b) <= 0;
-                }
-                case GREATER_OR_EQUAL: {
+                case GREATER_OR_EQUAL:
                     return a.compareTo(b) >= 0;
-                }
+                default:
+                    break;
+            }
+
+            throw new EvaluationException(String.format(EXCEPTION_MESSAGE, op, a.getClass().getName(), b.getClass().getName()));
+        }
+
+        /**
+         * Performs the specified operation on the specified arguments.
+         */
+        private static Object apply(Date a, Date b, Op op) {
+            switch (op) {
+                case ADD:
+                    return new Date(a.getTime() + b.getTime());
+                case SUB:
+                    return new Date(a.getTime() - b.getTime());
+                case LESS:
+                    return a.compareTo(b) < 0;
+                case GREATER:
+                    return a.compareTo(b) > 0;
+                case EQUAL:
+                    return a.compareTo(b) == 0;
+                case NOT_EQUAL:
+                    return a.compareTo(b) != 0;
+                case LESS_OR_EQUAL:
+                    return a.compareTo(b) <= 0;
+                case GREATER_OR_EQUAL:
+                    return a.compareTo(b) >= 0;
                 default:
                     break;
             }
@@ -689,27 +491,20 @@ public final class ByteCode {
          */
         private static Object apply(String a, String b, ByteCode.Op op) {
             switch (op) {
-                case ADD: {
+                case ADD:
                     return a + b;
-                }
-                case LESS: {
+                case LESS:
                     return a.compareTo(b) < 0;
-                }
-                case GREATER: {
+                case GREATER:
                     return a.compareTo(b) > 0;
-                }
-                case EQUAL: {
+                case EQUAL:
                     return a.compareTo(b) == 0;
-                }
-                case NOT_EQUAL: {
+                case NOT_EQUAL:
                     return a.compareTo(b) != 0;
-                }
-                case LESS_OR_EQUAL: {
+                case LESS_OR_EQUAL:
                     return a.compareTo(b) <= 0;
-                }
-                case GREATER_OR_EQUAL: {
+                case GREATER_OR_EQUAL:
                     return a.compareTo(b) >= 0;
-                }
                 default:
                     break;
             }
@@ -767,169 +562,162 @@ public final class ByteCode {
         }
 
         switch (t.getType()) {
-            case TEXT: {
+            case TEXT:
                 code.add(Op.TEXT);
                 code.add(t.getText());
                 break;
-            }
-            case FLOAT_NUMBER: {
+
+            case FLOAT_NUMBER:
                 code.add(Op.FLOAT);
                 // Always parse in invariant culture because the float regular expression in Lexer is culture-independent
                 code.add(Double.parseDouble(t.getText()));
                 break;
-            }
-            case INT_NUMBER: {
+
+            case INT_NUMBER:
                 code.add(Op.INT);
                 // Always parse in invariant culture because the float regular expression in Lexer is culture-independent
                 code.add(Integer.parseInt(t.getText()));
                 break;
-            }
-            case STRING: {
+
+            case STRING:
                 code.add(Op.STRING);
                 code.add(t.getText());
                 break;
-            }
-            case NULL: {
+
+            case NULL:
                 code.add(Op.NULL);
                 break;
-            }
-            case COLOR: {
+
+            case COLOR:
                 code.add(Op.COLOR);
                 code.add(parseColor(t.getText()));
                 break;
-            }
-            case OP_ADD: {
+
+            case OP_ADD:
                 code.add(Op.ADD);
                 break;
-            }
-            case OP_SUBTRACT: {
+
+            case OP_SUBTRACT:
                 if (node.getChildren().size() > 1) {
                     code.add(Op.SUB);
                 } else {
                     code.add(Op.MINUS);
                 }
                 break;
-            }
-            case OP_MULTIPLY: {
+
+            case OP_MULTIPLY:
                 code.add(Op.MUL);
                 break;
-            }
-            case OP_DIVIDE: {
+
+            case OP_DIVIDE:
                 code.add(Op.DIV);
                 break;
-            }
-            case OP_MOD: {
+
+            case OP_MOD:
                 code.add(Op.MOD);
                 break;
-            }
-            case OP_LESS: {
+
+            case OP_LESS:
                 code.add(Op.LESS);
                 break;
-            }
-            case OP_GREATER: {
+
+            case OP_GREATER:
                 code.add(Op.GREATER);
                 break;
-            }
-            case OP_EQUAL: {
+
+            case OP_EQUAL:
                 code.add(Op.EQUAL);
                 break;
-            }
-            case OP_NOT_EQUAL: {
+
+            case OP_NOT_EQUAL:
                 code.add(Op.NOT_EQUAL);
                 break;
-            }
-            case OP_LESS_OR_EQUAL: {
+
+            case OP_LESS_OR_EQUAL:
                 code.add(Op.LESS_OR_EQUAL);
                 break;
-            }
-            case OP_GREATER_OR_EQUAL: {
+
+            case OP_GREATER_OR_EQUAL:
                 code.add(Op.GREATER_OR_EQUAL);
                 break;
-            }
-            case OP_NOT: {
+
+            case OP_NOT:
                 code.add(Op.NOT);
                 break;
-            }
-            case OP_AND: {
+
+            case OP_AND:
                 code.add(Op.AND);
                 break;
-            }
-            case OP_XOR: {
+
+            case OP_XOR:
                 code.add(Op.XOR);
                 break;
-            }
-            case OP_POWER: {
+
+            case OP_POWER:
                 code.add(Op.POWER);
                 break;
-            }
-            case OP_OR: {
+
+            case OP_OR:
                 code.add(Op.OR);
                 break;
-            }
-            case OP_CONDITIONAL_AND: {
+
+            case OP_CONDITIONAL_AND:
                 code.add(Op.CONDITIONAL_AND);
                 break;
-            }
-            case OP_CONDITIONAL_OR: {
+
+            case OP_CONDITIONAL_OR:
                 code.add(Op.CONDITIONAL_OR);
                 break;
-            }
-            case OP_DOT: {
+
+            case OP_DOT:
                 code.add(Op.DOT);
                 code.add(node.getChildren().size()); // Dot count
                 break;
-            }
-            case OP_REFERENCE: {
-                code.add(Op.REFERENCE);
-                code.add(node.getChildren().size()); // Param count
-                break;
-            }
-            case OP_FORMAT: {
+
+            case OP_FORMAT:
                 code.add(Op.FORMATTING);
                 break;
-            }
-            case DISCARD: {
+
+            case DISCARD:
                 code.add(Op.DISCARD);
                 break;
-            }
-            case FORMAT: {
+
+            case FORMAT:
                 code.add(Op.FORMAT);
                 code.add(t.getText().substring(1, t.getText().length() - 1));
                 break;
-            }
-            case CULTURE: {
+
+            case CULTURE:
                 code.add(Op.CULTURE);
                 code.add(t.getText().substring(1, t.getText().length() - 1));
                 break;
-            }
+
             case IDENTIFIER: {
                 // If the operation at the top of the stack is not dereferencing this is a normal identifier.
                 // Otherwise, this is an object or member reference
                 Token parent = stack.peek();
-                if (parent != null &&
-                    (parent.getType() == TokenType.OP_DOT || parent.getType() == TokenType.OP_REFERENCE))
+                if (parent != null && parent.getType() == TokenType.OP_DOT) {
                     code.add(Op.OBJECT_OR_MEMBER);
-                else if (parent != null &&
-                    (parent.getType() == TokenType.INT_NUMBER || parent.getType() == TokenType.FLOAT_NUMBER))
+                } else if (parent != null && (parent.getType() == TokenType.INT_NUMBER || parent.getType() == TokenType.FLOAT_NUMBER)) {
                     code.add(Op.QUANTITY);
-                else
+                } else {
                     code.add(Op.IDENTIFIER);
+                }
                 code.add(t.getText());
                 break;
             }
-            case FUNCTION_CALL: {
+            case FUNCTION_CALL:
                 code.add(Op.FUNCTION_CALL);
                 code.add(node.getChildren().size()); // Param count
                 code.add(t.getText());
                 break;
-            }
-            case OP_EXPRESSION_SEPARATOR: {
+
+            case OP_EXPRESSION_SEPARATOR:
                 code.add(Op.EXPRESSION_SEPARATOR);
                 break;
-            }
-            default: {
+
+            default:
                 break;
-            }
         }
     }
 
@@ -946,8 +734,8 @@ public final class ByteCode {
     /**
      * Evaluates the byte code in the specified context.
      */
-    public Object evaluate(EvaluationContext context) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ParseException {
-        ArrayDeque<Object> stack = new ArrayDeque<>();
+    public Object evaluate(EvaluationContext context) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Deque<Object> evalStack = new ArrayDeque<>();
 
         int i = 0;
         while (i < code.size()) {
@@ -956,77 +744,78 @@ public final class ByteCode {
             switch (op) {
                 case FLOAT: {
                     double a = (double)code.get(i); i++;
-                    stack.push(a);
+                    evalStack.push(a);
                     break;
                 }
                 case INT: {
                     int a = (int)code.get(i); i++;
-                    stack.push(a);
+                    evalStack.push(a);
                     break;
                 }
                 case STRING: {
                     String a = (String)code.get(i); i++;
-                    stack.push(a);
+                    evalStack.push(a);
                     break;
                 }
                 case NULL: {
-                    stack.push(null);
+                    evalStack.push(Null.getInstance());
                     break;
                 }
                 case COLOR: {
                     Color a = (Color)code.get(i); i++;
-                    stack.push(a);
+                    evalStack.push(a);
                     break;
                 }
                 case QUANTITY: {
                     String unit = (String)code.get(i); i++;
                     Op valueOp = (Op)code.get(i); i++;
                     double value;
-                    if (valueOp == Op.INT)
-                        value = (int)code.get(i);
-                    else
-                        value = (double)code.get(i);
+                    if (valueOp == Op.INT) {
+                        value = (int) code.get(i);
+                    } else {
+                        value = (double) code.get(i);
+                    }
                     i++;
-                    stack.push(new Quantity(value, unit));
+                    evalStack.push(new Quantity(value, unit));
                     break;
                 }
                 case FORMAT: {
                     String a = (String)code.get(i); i++;
-                    stack.push(a);
+                    evalStack.push(a);
 
                     // Push invariant culture. If the locale is explicitly specified later, we will pop this one
-                    stack.push(null);
+                    evalStack.push(Null.getInstance());
                     break;
                 }
                 case DISCARD: {
                     // Push an empty formatting string to indicate that we would like to prevent
                     // the formatted expression from appearing in the output
-                    stack.push("");
-                    stack.push(null);
+                    evalStack.push(Null.getInstance());
+                    evalStack.push(Null.getInstance());
                     break;
                 }
                 case CULTURE: {
                     // Pop the invariant culture and push the specified one
                     String a = (String)code.get(i); i++;
-                    stack.pop();
-                    stack.push(a);
+                    evalStack.pop();
+                    evalStack.push(a);
                     break;
                 }
                 case TEXT: {
                     String a = (String)code.get(i); i++;
-                    stack.push(a);
+                    evalStack.push(a);
                     break;
                 }
                 case IDENTIFIER: {
                     String a = (String)code.get(i); i++;
-                    stack.push(new Identifier(a));
+                    evalStack.push(new Identifier(a));
                     break;
                 }
                 case OBJECT_OR_MEMBER: {
                     // Its the name of an object or its property. Push it to the stack for
                     // subsequent processing when the Op.Dot operation is reached
                     String a = (String)code.get(i); i++;
-                    stack.push(a);
+                    evalStack.push(a);
                     break;
                 }
                 case ADD:
@@ -1050,25 +839,33 @@ public final class ByteCode {
                 case OR:
                 case XOR: {
                     // Binary operation
-                    Object b = evaluate(stack.pop(), context);
-                    Object a = evaluate(stack.pop(), context);
-                    stack.push(Calc.apply(a, b, op));
+                    Object b = evaluate(evalStack.pop(), context);
+                    Object a = evaluate(evalStack.pop(), context);
+                    Object result = Calc.apply(a, b, op);
+                    if (result == null) {
+                        result = Null.getInstance();
+                    }
+                    evalStack.push(result);
                     break;
                 }
                 case MINUS:
                 case NOT: {
                     // Unary operation
-                    Object a = evaluate(stack.pop(), context);
-                    stack.push(Calc.apply(a, op));
+                    Object a = evaluate(evalStack.pop(), context);
+                    Object result = Calc.apply(a, op);
+                    if (result == null) {
+                        result = Null.getInstance();
+                    }
+                    evalStack.push(result);
                     break;
                 }
                 case DOT: {
                     int count = (int)code.get(i); i++;
                     List<String> r = new ArrayList<>();
                     for (int c = 0; c < count - 1; c++) {
-                        r.add(0, (String) stack.pop());
+                        r.add(0, (String) evalStack.pop());
                     }
-                    Object target = stack.pop();
+                    Object target = evalStack.pop();
 
                     // Create a MemberInfo and push it in the stack
                     MemberInfo info = target instanceof String ?
@@ -1079,29 +876,18 @@ public final class ByteCode {
                         info = context.createMemberInfo(info, r.get(c));
                     }
 
-                    stack.push(info);
-                    break;
-                }
-                case REFERENCE: {
-                    int count = (int)code.get(i); i++;
-                    List<String> r = new ArrayList<>();
-                    for (int c = 0; c < count - 1; c++) {
-                        r.add(0, (String) stack.pop());
-                    }
-                    String target = (String)stack.pop();
-
-                    stack.push(context.resolveReference(target, r));
+                    evalStack.push(info);
                     break;
                 }
                 case FORMATTING: {
-                    String c = (String)stack.pop();
-                    String b = (String)stack.pop();
-                    Object a = evaluate(stack.pop(), context);
+                    Object c = evalStack.pop();
+                    Object b = evaluate(evalStack.pop(), context);
+                    Object a = evaluate(evalStack.pop(), context);
 
-                    // The formatting string might be null or empty, particularly when discarding is specified.
+                    // The formatting string might be null, particularly when discarding is specified.
                     // In this case do not push anything in the stack
-                    if (!StringUtils.isNullOrEmpty(b)) {
-                        stack.push(context.format(a, b, StringUtils.isNullOrEmpty(c) ? null : new Locale(c)));
+                    if (b != null) {
+                        evalStack.push(context.format(a, (String)b, c instanceof Null ? null : new Locale((String)c)));
                     }
                     break;
                 }
@@ -1110,34 +896,37 @@ public final class ByteCode {
                     String a = (String)code.get(i); i++;
                     Object[] parameters = new Object[paramCount];
                     for (int j = 0; j < paramCount; j++) {
-                        parameters[paramCount - j - 1] = evaluate(stack.pop(), context);
+                        parameters[paramCount - j - 1] = evaluate(evalStack.pop(), context);
                     }
 
-                    stack.push(context.invokeFunction(a, parameters));
+                    Object result = context.invokeFunction(a, parameters);
+                    if (result == null) {
+                        result = Null.getInstance();
+                    }
+                    evalStack.push(result);
                     break;
                 }
                 case EXPRESSION_SEPARATOR: {
-                    Object b = evaluate(stack.pop(), context);
-                    /*Object a = */
-                    evaluate(stack.pop(), context);
-                    stack.push(b);
+                    Object b = evaluate(evalStack.pop(), context);
+                    evaluate(evalStack.pop(), context);
+                    evalStack.push(b);
                     break;
                 }
             }
         }
 
-        if (stack.isEmpty()) {
+        if (evalStack.isEmpty()) {
             return null;
         }
 
-        if (stack.size() == 1) {
-            return evaluate(stack.pop(), context);
+        if (evalStack.size() == 1) {
+            return evaluate(evalStack.pop(), context);
         }
 
         // Reverse the stack and concatenate the string representation of all elements contained within it
-        ArrayDeque<Object> reversed = new ArrayDeque<>();
-        while (!stack.isEmpty()) {
-            reversed.push(stack.pop());
+        Deque<Object> reversed = new ArrayDeque<>();
+        while (!evalStack.isEmpty()) {
+            reversed.push(evalStack.pop());
         }
 
         StringBuilder result = new StringBuilder();
@@ -1145,15 +934,15 @@ public final class ByteCode {
             result.append(evaluate(reversed.pop(), context));
         }
 
-        return result;
+        return result.toString();
     }
 
     /**
      * Evaluates the specified object.
      * <p>
-     * If the object is a MemberInfo, returns its value.
-     * If the object is an Identifier, returns its value.
-     * If the object is a Color, tries to parse it through the context.
+     * If the object is a {@link MemberInfo}, returns its value.
+     * If the object is an {@link Identifier}, returns its value.
+     * If the object is a {@link Color}, tries to parse it through the context.
      * Otherwise, returns the object itself.
      */
     private Object evaluate(Object value, EvaluationContext context) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -1192,10 +981,13 @@ public final class ByteCode {
     public Set<String> getIdentifiers() {
         Set<String> identifiers = new HashSet<>();
 
-        for (int i = 0; i < code.size(); i++) {
+        int i = 0;
+        while (i < code.size()) {
             if (code.get(i) instanceof Op && code.get(i) == Op.IDENTIFIER) {
-                identifiers.add((String)code.get(++i));
+                i++;
+                identifiers.add((String)code.get(i));
             }
+            i++;
         }
 
         return identifiers;
@@ -1206,7 +998,7 @@ public final class ByteCode {
  * Represents identifiers in the code evaluation stack. The identifier is
  * then either evaluated or assigned depending on where it appears in an expression.
  */
-final class Identifier {
+class Identifier {
     private final String name;
 
     /**
@@ -1219,6 +1011,18 @@ final class Identifier {
 
     String getName() {
         return name;
+    }
+}
+
+final class Null extends Identifier {
+    private static final Null instance = new Null();
+
+    private Null() {
+        super("null");
+    }
+
+    public static Null getInstance() {
+        return instance;
     }
 }
 

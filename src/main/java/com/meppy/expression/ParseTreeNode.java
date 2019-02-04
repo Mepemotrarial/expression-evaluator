@@ -1,4 +1,4 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ final class ParseTreeNode {
     /**
      * Sets the underlying token.
      */
-    public void setToken(Token value) {
+    void setToken(Token value) {
         token = value;
     }
 }

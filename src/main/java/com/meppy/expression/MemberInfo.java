@@ -1,4 +1,4 @@
-package com.meppy.expressions;
+package com.meppy.expression;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,10 +23,10 @@ final class MemberInfo {
      */
     private final boolean isMemberInfo;
 
-    /// <summary>
-    /// For the same reason as above - if the underlying object is a MemberInfo,
-    /// the actual property descriptor is obtained later, when the value is get or set.
-    /// </summary>
+    /**
+     * For the same reason as above - if the underlying object is a {@link MemberInfo},
+     * the actual property descriptor is obtained later, when the value is get or set.
+     */
     private final String propertyName;
 
     /**
@@ -37,13 +37,16 @@ final class MemberInfo {
     /**
      * Initializes a new instance of the {@link MemberInfo} class for the specified object and the property with the specified name.
      */
-    MemberInfo(Object target, String propertyName, EvaluationContext context) throws NoSuchMethodException
+    MemberInfo(Object target, String propertyName, EvaluationContext context)
     {
         this.context = context;
         this.target = target;
         this.propertyName = propertyName;
 
-        propertyGetter = target.getClass().getMethod("get" + propertyName);
+        try {
+            propertyGetter = getProperty(target.getClass(), propertyName);
+        } catch (NoSuchMethodException ex) {
+        }
         isMemberInfo = false;
     }
 
@@ -59,28 +62,39 @@ final class MemberInfo {
         isMemberInfo = true;
     }
 
+    private static Method getProperty(Class<?> clazz, String name) throws NoSuchMethodException {
+        try {
+            return clazz.getMethod("get" + name);
+        } catch (NoSuchMethodException ex) {
+            return clazz.getDeclaredMethod("get" + name);
+        }
+    }
+
     private Object getTarget() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Object target = this.target;
+        Object resolvedTarget = target;
         if (isMemberInfo) {
-            target = ((MemberInfo)this.target).getValue(this);
+            resolvedTarget = ((MemberInfo)this.target).getValue(this);
             if (propertyGetter == null) {
-                propertyGetter = target.getClass().getMethod("get" + propertyName);
+                try {
+                    propertyGetter = getProperty(resolvedTarget.getClass(), propertyName);
+                } catch (NoSuchMethodException ex) {
+                }
             }
         }
 
-        return target;
+        return resolvedTarget;
     }
 
     private Object getValue(MemberInfo parent) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Object target = getTarget();
+        Object resolvedTarget = getTarget();
         if (propertyGetter != null) {
             if (!propertyGetter.isAccessible()) {
                 propertyGetter.setAccessible(true);
             }
-            return propertyGetter.invoke(target);
+            return propertyGetter.invoke(resolvedTarget);
         }
 
-        return context.evaluateMember(target, propertyName, parent == null);
+        return context.evaluateMember(resolvedTarget, propertyName, parent == null);
     }
 
     /**
