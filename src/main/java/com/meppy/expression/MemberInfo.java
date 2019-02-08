@@ -18,8 +18,8 @@ final class MemberInfo {
     private Method propertyGetter;
 
     /**
-     * A flag indicating whether the underlying object is of type MemberInfo instead of a direct object reference.
-     * The actual object can be obtained by inspecting the value of the {@link MemberInfo#getValue} property.
+     * A flag indicating whether the {@link #target} object is of type {@link MemberInfo} instead of a direct object reference.
+     * The actual object can be obtained by inspecting the value of the {@link MemberInfo#getValue} property of the target object.
      */
     private final boolean isMemberInfo;
 
@@ -37,16 +37,12 @@ final class MemberInfo {
     /**
      * Initializes a new instance of the {@link MemberInfo} class for the specified object and the property with the specified name.
      */
-    MemberInfo(Object target, String propertyName, EvaluationContext context)
-    {
+    MemberInfo(Object target, String propertyName, EvaluationContext context) {
         this.context = context;
         this.target = target;
         this.propertyName = propertyName;
 
-        try {
-            propertyGetter = getProperty(target.getClass(), propertyName);
-        } catch (NoSuchMethodException ex) {
-        }
+        initializePropertyGetter(target, propertyName);
         isMemberInfo = false;
     }
 
@@ -62,23 +58,30 @@ final class MemberInfo {
         isMemberInfo = true;
     }
 
-    private static Method getProperty(Class<?> clazz, String name) throws NoSuchMethodException {
+    private void initializePropertyGetter(Object target, String propertyName) {
         try {
-            return clazz.getMethod("get" + name);
+            propertyGetter = getProperty(target.getClass(), propertyName);
         } catch (NoSuchMethodException ex) {
-            return clazz.getDeclaredMethod("get" + name);
+            // The property was not found on the target object. This is a valid use case. During subsequent evaluations,
+            // when getValue() is called, the member will be evaluated using the EvaluationContext.evaluateMember method.
+        }
+    }
+
+    private static Method getProperty(Class<?> clazz, String name) throws NoSuchMethodException {
+        String propertyName = StringUtils.getPropertyName(name);
+        try {
+            return clazz.getMethod(propertyName);
+        } catch (NoSuchMethodException ex) {
+            return clazz.getDeclaredMethod(propertyName);
         }
     }
 
     private Object getTarget() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Object resolvedTarget = target;
         if (isMemberInfo) {
-            resolvedTarget = ((MemberInfo)this.target).getValue(this);
+            resolvedTarget = ((MemberInfo)resolvedTarget).getValue(this);
             if (propertyGetter == null) {
-                try {
-                    propertyGetter = getProperty(resolvedTarget.getClass(), propertyName);
-                } catch (NoSuchMethodException ex) {
-                }
+                initializePropertyGetter(resolvedTarget, propertyName);
             }
         }
 

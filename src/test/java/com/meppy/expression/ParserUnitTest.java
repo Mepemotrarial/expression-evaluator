@@ -6,14 +6,14 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class ParserUnitTest {
+public final class ParserUnitTest {
     private static CompileOptions compileOptions;
     private static CompileOptions compileOptions1;
 
     @BeforeClass
     public static void setUp() {
         compileOptions = new CompileOptions();
-        compileOptions1 = new CompileOptions(false, true);
+        compileOptions1 = new CompileOptions(true);
     }
 
     @Test
@@ -26,15 +26,13 @@ public class ParserUnitTest {
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidCulture1() {
         List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_CULTURE_1);
-        ParseTreeNode node = new Parser(tokens).parse();
-        Assert.assertNotNull(node);
+        new Parser(tokens).parse();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidCulture2() {
         List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_CULTURE_2);
-        ParseTreeNode node = new Parser(tokens).parse();
-        Assert.assertNotNull(node);
+        new Parser(tokens).parse();
     }
 
     @Test
@@ -82,8 +80,7 @@ public class ParserUnitTest {
     @Test(expected = IllegalArgumentException.class)
     public void testInvalid1() {
         List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_1);
-        ParseTreeNode node = new Parser(tokens).parse();
-        Assert.assertNotNull(node);
+        new Parser(tokens).parse();
     }
 
     @Test
@@ -96,22 +93,19 @@ public class ParserUnitTest {
     @Test(expected = ParsingException.class)
     public void testInvalid3() {
         List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_3);
-        ParseTreeNode node = new Parser(tokens).parse();
-        Assert.assertNull(node);
+        new Parser(tokens).parse();
     }
 
     @Test(expected = ParsingException.class)
     public void testInvalid4() {
         List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_4);
-        ParseTreeNode node = new Parser(tokens).parse();
-        Assert.assertNull(node);
+        new Parser(tokens).parse();
     }
 
     @Test(expected = ParsingException.class)
     public void testInvalid5() {
         List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_5);
-        ParseTreeNode node = new Parser(tokens).parse();
-        Assert.assertNull(node);
+        new Parser(tokens).parse();
     }
 
     @Test

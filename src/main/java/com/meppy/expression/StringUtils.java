@@ -21,4 +21,12 @@ final class StringUtils {
 
          return a.compareToIgnoreCase(b) == 0;
     }
+
+    static String getPropertyName(String name) {
+        if (isNullOrEmpty(name)) {
+            return "get";
+        }
+
+        return "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
+    }
 }

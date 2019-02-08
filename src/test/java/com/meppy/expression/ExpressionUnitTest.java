@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
-public class ExpressionUnitTest {
+public final class ExpressionUnitTest {
     private static final double EPSILON = 1.0E-6;
     private static EvaluationContext evaluationContextDefault;
     private static EvaluationContext evaluationContextCustom;
@@ -43,8 +43,8 @@ public class ExpressionUnitTest {
                 return FunctionEvaluationResult.notEvaluated();
             });
         evaluationContextCustomWithTarget = new EvaluationContext(new CustomObject(new Point(5, 10)));
-        compileOptions = new CompileOptions(false);
-        compileOptions1 = new CompileOptions(false, true);
+        compileOptions = new CompileOptions();
+        compileOptions1 = new CompileOptions(true);
     }
 
     private static class CustomObject {
@@ -108,7 +108,7 @@ public class ExpressionUnitTest {
 
     @Test
     public void testSeparator() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        ByteCode code = Compiler.compile(Expressions.SEPARATOR, false);
+        ByteCode code = Compiler.compile(Expressions.SEPARATOR);
         Object result = code.evaluate(evaluationContextDefault);
         Assert.assertEquals(0, result);
     }
@@ -233,8 +233,7 @@ public class ExpressionUnitTest {
     @Test(expected = IllegalArgumentException.class)
     public void testFunctionsCdateInvalid() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.FUNCTIONS_CDATE_INVALID, compileOptions);
-        Object result = code.evaluate(evaluationContextDefault);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextDefault);
     }
 
     @Test
@@ -631,8 +630,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testFunctionsInsufficientParams() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.FUNCTIONS_INSUFFICIENT_PARAMS, compileOptions);
-        Object result = code.evaluate(evaluationContextDefault);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextDefault);
     }
 
     @Test
@@ -645,8 +643,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testFunctionsNotDefined() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.FUNCTIONS_NOT_DEFINED, compileOptions);
-        Object result = code.evaluate(evaluationContextDefault);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextDefault);
     }
 
     @Test
@@ -687,8 +684,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testOpByteInvalid() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_BYTE_INVALID, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -722,8 +718,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testOpShortInvalid() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_SHORT_INVALID, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -757,8 +752,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testOpIntegerInvalid() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_INTEGER_INVALID, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -792,8 +786,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testOpLongInvalid() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_LONG_INVALID, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -820,8 +813,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testOpFloatInvalid() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_FLOAT_INVALID, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -848,8 +840,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testOpDoubleInvalid() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_DOUBLE_INVALID, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -862,8 +853,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testOpBooleanInvalid() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_BOOLEAN_INVALID, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -883,15 +873,13 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testOpDateInvalid() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_DATE_INVALID, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test(expected = EvaluationException.class)
     public void testOpDateUnary() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_DATE_UNARY, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -911,8 +899,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testOpStringInvalid() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_STRING_INVALID, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -925,15 +912,13 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testPromoteBooleanToDate() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_PROMOTE_BOOLEAN_TO_DATE, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test(expected = EvaluationException.class)
     public void testPromoteBooleanToAny() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_PROMOTE_BOOLEAN_TO_ANY, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -982,8 +967,7 @@ public class ExpressionUnitTest {
     @Test(expected = ArithmeticException.class)
     public void testOpDivisionByZero() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.OP_DIVISION_BY_ZERO, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -1049,16 +1033,14 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testInvalidMemberReference() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.INVALID_MEMBER_REFERENCE, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test(expected = EvaluationException.class)
     public void testInvalidMemberReference2() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.INVALID_MEMBER_REFERENCE2, compileOptions);
         evaluationContextCustom.getLocalVars().put("code", code);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -1066,6 +1048,12 @@ public class ExpressionUnitTest {
         ByteCode code = Compiler.compile(Expressions.FUNCTION_MEMBER_REFERENCE, compileOptions);
         Object result = code.evaluate(evaluationContextCustom);
         Assert.assertEquals(4.5, result);
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testFunctionInvalidMemberReference() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        ByteCode code = Compiler.compile(Expressions.FUNCTION_INVALID_MEMBER_REFERENCE, compileOptions);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -1078,15 +1066,13 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testTargetMemberInvalidReference1() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.TARGET_MEMBER_INVALID_REFERENCE_1, compileOptions);
-        Object result = code.evaluate(evaluationContextCustomWithTarget);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustomWithTarget);
     }
 
     @Test(expected = EvaluationException.class)
     public void testTargetMemberInvalidReference2() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.TARGET_MEMBER_INVALID_REFERENCE_2, compileOptions);
-        Object result = code.evaluate(evaluationContextCustomWithTarget);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustomWithTarget);
     }
 
     @Test
@@ -1099,8 +1085,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testInvalidIdentifier() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.INVALID_IDENTIFIER, compileOptions);
-        Object result = code.evaluate(evaluationContextCustom);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustom);
     }
 
     @Test
@@ -1201,8 +1186,7 @@ public class ExpressionUnitTest {
     @Test(expected = EvaluationException.class)
     public void testDispatchFunctionCallWithMissingFunction() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ByteCode code = Compiler.compile(Expressions.DISPATCH_FUNCTION_CALL_MISSING_FUNCTION, compileOptions);
-        Object result = code.evaluate(evaluationContextCustomWithCallbacks);
-        Assert.assertNotNull(result);
+        code.evaluate(evaluationContextCustomWithCallbacks);
     }
 
     @Test

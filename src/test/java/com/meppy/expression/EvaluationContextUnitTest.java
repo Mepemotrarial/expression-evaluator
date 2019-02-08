@@ -8,10 +8,6 @@ import java.util.Locale;
 
 public final class EvaluationContextUnitTest {
     private static final class CustomEvaluationContext extends EvaluationContext {
-        public CustomEvaluationContext() {
-            super(null);
-        }
-
         public Object evaluateNullIdentifier() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
             return evaluateIdentifier(null);
         }
@@ -39,7 +35,6 @@ public final class EvaluationContextUnitTest {
     @Test(expected = EvaluationException.class)
     public void testEvaluateIdentifierWithNull() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         CustomEvaluationContext context = new CustomEvaluationContext();
-        Object result = context.evaluateNullIdentifier();
-        Assert.assertNull(result);
+        context.evaluateNullIdentifier();
     }
 }

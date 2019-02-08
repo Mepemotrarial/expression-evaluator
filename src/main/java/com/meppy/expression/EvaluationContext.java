@@ -50,6 +50,13 @@ public class EvaluationContext {
     private final Function<String, FunctionEvaluationResult> parseObject;
 
     /**
+     * Initializes a new instance of the {@link EvaluationContext} class.
+     */
+    public EvaluationContext() {
+        this(null, Locale.ROOT, null, null);
+    }
+
+    /**
      * Initializes a new instance of the {@link EvaluationContext} class for the specified object.
      */
     public EvaluationContext(Object target) {
@@ -344,7 +351,7 @@ public class EvaluationContext {
 
         // Attempt to resolve the specified identifier as a property on the underlying object
         if (target != null) {
-            Method propertyGetter = target.getClass().getMethod("get" + name);
+            Method propertyGetter = target.getClass().getMethod(StringUtils.getPropertyName(name));
             if (!propertyGetter.isAccessible()) {
                 propertyGetter.setAccessible(true);
             }
@@ -455,7 +462,7 @@ public class EvaluationContext {
         if (targetObject == null && target != null) {
             // Attempt to resolve the specified identifier as a property on the underlying object
             try {
-                Method propertyGetter = target.getClass().getMethod("get" + objectName);
+                Method propertyGetter = target.getClass().getMethod(StringUtils.getPropertyName(objectName));
                 targetObject = propertyGetter.invoke(target);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 throw new EvaluationException(String.format("Could not resolve '%1$s'.", objectName), e);

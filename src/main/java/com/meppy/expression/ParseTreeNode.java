@@ -32,6 +32,12 @@ final class ParseTreeNode {
         this.children = new ArrayList<>();
     }
 
+    void accept(ParseTreeVisitor visitor) {
+        visitor.enterVisit(this);
+        children.forEach(child -> child.accept(visitor));
+        visitor.leaveVisit(this);
+    }
+
     /**
      * Gets the list with all children of this node.
      */
@@ -52,4 +58,9 @@ final class ParseTreeNode {
     void setToken(Token value) {
         token = value;
     }
+}
+
+interface ParseTreeVisitor {
+    void enterVisit(ParseTreeNode node);
+    void leaveVisit(ParseTreeNode node);
 }

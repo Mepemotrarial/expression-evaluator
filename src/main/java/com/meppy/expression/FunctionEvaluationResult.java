@@ -6,6 +6,7 @@ package com.meppy.expression;
 public final class FunctionEvaluationResult {
     private final Object result;
     private final boolean isEvaluated;
+    private static final FunctionEvaluationResult notEvaluatedResult = new FunctionEvaluationResult();
 
     FunctionEvaluationResult() {
         result = null;
@@ -18,7 +19,7 @@ public final class FunctionEvaluationResult {
     }
 
     public static FunctionEvaluationResult notEvaluated() {
-        return new FunctionEvaluationResult();
+        return notEvaluatedResult;
     }
 
     public Object getResult() {

@@ -6,14 +6,14 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class LexerUnitTest {
+public final class LexerUnitTest {
     private static CompileOptions compileOptions;
     private static CompileOptions compileOptions1;
 
     @BeforeClass
     public static void setUp() {
         compileOptions = new CompileOptions();
-        compileOptions1 = new CompileOptions(false, true);
+        compileOptions1 = new CompileOptions(true);
     }
 
     @Test
@@ -31,14 +31,12 @@ public class LexerUnitTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidCulture1() {
-        List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_CULTURE_1);
-        Assert.assertTrue(tokens.size() > 0);
+        new Lexer(compileOptions).tokenize(Expressions.INVALID_CULTURE_1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidCulture2() {
-        List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_CULTURE_2);
-        Assert.assertTrue(tokens.size() > 0);
+        new Lexer(compileOptions).tokenize(Expressions.INVALID_CULTURE_2);
     }
 
     @Test
@@ -83,44 +81,37 @@ public class LexerUnitTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalid1() {
-        List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_1);
-        Assert.assertTrue(tokens.size() > 0);
+        new Lexer(compileOptions).tokenize(Expressions.INVALID_1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidIncompleteFormatting() {
-        List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_INCOMPLETE_FORMATTING);
-        Assert.assertTrue(tokens.size() > 0);
+        new Lexer(compileOptions).tokenize(Expressions.INVALID_INCOMPLETE_FORMATTING);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidFormatting() {
-        List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_FORMATTING);
-        Assert.assertTrue(tokens.size() > 0);
+        new Lexer(compileOptions).tokenize(Expressions.INVALID_FORMATTING);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidCulture3() {
-        List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_CULTURE_3);
-        Assert.assertTrue(tokens.size() > 0);
+        new Lexer(compileOptions).tokenize(Expressions.INVALID_CULTURE_3);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidCulture4() {
-        List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_CULTURE_4);
-        Assert.assertTrue(tokens.size() > 0);
+        new Lexer(compileOptions).tokenize(Expressions.INVALID_CULTURE_4);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidIncompleteString() {
-        List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_INCOMPLETE_STRING);
-        Assert.assertTrue(tokens.size() > 0);
+        new Lexer(compileOptions).tokenize(Expressions.INVALID_INCOMPLETE_STRING);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidIncompleteString2() {
-        List<Token> tokens = new Lexer(compileOptions).tokenize(Expressions.INVALID_INCOMPLETE_STRING_2);
-        Assert.assertTrue(tokens.size() > 0);
+        new Lexer(compileOptions).tokenize(Expressions.INVALID_INCOMPLETE_STRING_2);
     }
 
     @Test

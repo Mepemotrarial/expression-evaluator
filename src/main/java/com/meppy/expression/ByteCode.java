@@ -105,7 +105,7 @@ public final class ByteCode {
          * Contains the priority of the types. Objects are promoted to types
          * of higher priority when performing operation on operands of different types.
          */
-        private static Dictionary<Class<?>, Integer> typePriority;
+        private static final Dictionary<Class<?>, Integer> typePriority;
 
         static {
             typePriority = new Hashtable<>();
@@ -521,7 +521,7 @@ public final class ByteCode {
     /**
      * A temporary object used during code generation.
      */
-    private ArrayDeque<Token> stack;
+    private Deque<Token> stack;
 
     /**
      * Creates and returns an empty byte code. Evaluating empty byte code will produce null as a result.
@@ -541,8 +541,9 @@ public final class ByteCode {
         stack = new ArrayDeque<>();
 
         // Build the byte code out of the specified root
-        if (root != null)
+        if (root != null) {
             buildCode(root);
+        }
     }
 
     /**
@@ -555,10 +556,6 @@ public final class ByteCode {
             stack.push(t);
             node.getChildren().forEach(this::buildCode);
             stack.pop();
-        }
-
-        if (t == null) {
-            return;
         }
 
         switch (t.getType()) {

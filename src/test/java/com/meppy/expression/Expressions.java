@@ -1,7 +1,7 @@
 package com.meppy.expression;
 
 public final class Expressions {
-    public static final String FORMATTING_CULTURE = "[(1 + fact(Value)) / 3 @ \"#.00\" : \"bg_BG\"]";
+    public static final String FORMATTING_CULTURE = "[(1 + fact(value)) / 3 @ \"#.00\" : \"bg_BG\"]";
     public static final String INVALID_CULTURE_1 = "[10.5 @ \"#\" : bg_BG\"]";
     public static final String INVALID_CULTURE_2 = "[10.5 @ \"#\" : \"bg_BG]";
     public static final String SEPARATOR = "[1 + 2; 3 / 4]";
@@ -179,19 +179,20 @@ public final class Expressions {
     public static final String OP_NULL_UNARY_MINUS = "[-null]";
 
     public static final String CUSTOM_FUNCTION = "Factorial of [10] is [factorial(10)]";
-    public static final String VARIABLES_AND_MEMBER_REFERENCE = "The distance between points [a] and [b] is [sqrt(pow(a.X - b.X) + pow(a.Y - b.Y))].";
-    public static final String TRIPLE_MEMBER_REFERENCE = "[code.Identifiers.Class]";
-    public static final String PRIVATE_MEMBER_REFERENCE = "[code.Length]";
+    public static final String VARIABLES_AND_MEMBER_REFERENCE = "The distance between points [a] and [b] is [sqrt(pow(a.x - b.x) + pow(a.y - b.y))].";
+    public static final String TRIPLE_MEMBER_REFERENCE = "[code.identifiers.class]";
+    public static final String PRIVATE_MEMBER_REFERENCE = "[code.length]";
     public static final String INVALID_MEMBER_REFERENCE = "[some.invalid.reference]";
     public static final String INVALID_MEMBER_REFERENCE2 = "[code.x]";
-    public static final String FUNCTION_MEMBER_REFERENCE = "[getPoint().X]";
-    public static final String TARGET_MEMBER_REFERENCE = "[Point.X + this.Point.Y]";
-    public static final String TARGET_MEMBER_INVALID_REFERENCE_1 = "[Point.X + this.Point.Z]";
-    public static final String TARGET_MEMBER_INVALID_REFERENCE_2 = "[Missing.X + this.Missing]";
-    public static final String TARGET_MEMBER_REFERENCE2 = "[Point]";
+    public static final String FUNCTION_MEMBER_REFERENCE = "[getPoint().x]";
+    public static final String FUNCTION_INVALID_MEMBER_REFERENCE = "getPoint().z";
+    public static final String TARGET_MEMBER_REFERENCE = "[point.x + this.point.y]";
+    public static final String TARGET_MEMBER_INVALID_REFERENCE_1 = "[point.x + this.point.z]";
+    public static final String TARGET_MEMBER_INVALID_REFERENCE_2 = "[missing.x + this.missing]";
+    public static final String TARGET_MEMBER_REFERENCE2 = "[point]";
     public static final String INVALID_IDENTIFIER = "[missing]";
     public static final String IDENTIFIERS = "[simple + some.reference / simple]";
-    public static final String RESOLVE_OBJECT = "[myObject.X]";
+    public static final String RESOLVE_OBJECT = "[myObject.x]";
 
     public static final String FORMAT_DOUBLE = "[1.2345 @ \"#.00\"]";
     public static final String FORMAT_INTEGER = "[12345 @ \"#\"]";

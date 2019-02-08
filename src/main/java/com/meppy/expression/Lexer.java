@@ -12,32 +12,32 @@ final class Lexer {
     /**
      * Identifier regular expression.
      */
-    private static final Pattern identifierRegex = Pattern.compile("[a-zA-Z_][a-z_A-Z0-9]*");
+    private static final Pattern IDENTIFIER_REGEX = Pattern.compile("[a-zA-Z_][a-z_A-Z0-9]*");
 
     /**
      * Free text regular expression.
      */
-    private static final Pattern textRegex = Pattern.compile("[^\\[]*");
+    private static final Pattern TEXT_REGEX = Pattern.compile("[^\\[]*");
 
     /**
      * Integer number regular expression.
      */
-    private static final Pattern intNumberRegex = Pattern.compile("[0-9]+");
+    private static final Pattern INT_NUMBER_REGEX = Pattern.compile("[0-9]+");
 
     /**
      * Float number regular expression.
      */
-    private static final Pattern floatNumberRegex = Pattern.compile("[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
+    private static final Pattern FLOAT_NUMBER_REGEX = Pattern.compile("[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
 
     /**
      * Color regular expression.
      */
-    private static final Pattern colorRegex = Pattern.compile("#[a-zA-Z0-9]*");
+    private static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]*");
 
     /**
      * Whitespace regular expression.
      */
-    private static final Pattern wsRegex = Pattern.compile("[\\s]*");
+    private static final Pattern WS_REGEX = Pattern.compile("[\\s]*");
 
 
     /**
@@ -256,7 +256,7 @@ final class Lexer {
      * Recognizes a whitespace token.
      */
     private boolean ws() {
-        int length = match(wsRegex);
+        int length = match(WS_REGEX);
         if (length > 0) {
             // Note: We are ignoring whitespaces
             current += length;
@@ -503,7 +503,7 @@ final class Lexer {
             return false;
         }
 
-        int length = match(textRegex);
+        int length = match(TEXT_REGEX);
         if (length > 0) {
             tokens.add(new Token(input.substring(current, current + length), TokenType.TEXT));
             current += length;
@@ -517,7 +517,7 @@ final class Lexer {
      * Recognizes an identifier.
      */
     private boolean identifier() {
-        int length = match(identifierRegex);
+        int length = match(IDENTIFIER_REGEX);
         if (length > 0) {
             tokens.add(new Token(input.substring(current, current + length), TokenType.IDENTIFIER));
             current += length;
@@ -587,10 +587,10 @@ final class Lexer {
             return false;
         }
 
-        int length = match(floatNumberRegex);
+        int length = match(FLOAT_NUMBER_REGEX);
         if (length > 0) {
             // Check if its an integer number
-            int length2 = match(intNumberRegex);
+            int length2 = match(INT_NUMBER_REGEX);
             if (length2 == length) {
                 tokens.add(new Token(input.substring(current, current + length), TokenType.INT_NUMBER));
                 current += length;
@@ -608,7 +608,7 @@ final class Lexer {
      * Recognizes a color.
      */
     private boolean color() {
-        int length = match(colorRegex);
+        int length = match(COLOR_REGEX);
         if (length > 0) {
             tokens.add(new Token(input.substring(current, current + length), TokenType.COLOR));
             current += length;

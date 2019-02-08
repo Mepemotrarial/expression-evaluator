@@ -7,6 +7,19 @@ public final class Compiler {
     private Compiler() {
     }
 
+    static String normalize(String expression) {
+        if (expression == null) {
+            return "";
+        }
+
+        boolean hasBrackets = expression.indexOf('[') != -1;
+        if (hasBrackets) {
+            return expression;
+        }
+
+        return "[" + expression.trim() + "]";
+    }
+
     /**
      * Returns a {@link ByteCode} object corresponding to the specified source code.
      * The returned byte code can be subsequently evaluated by calling its {@link ByteCode#evaluate} method.
@@ -14,18 +27,7 @@ public final class Compiler {
      * @return The compiled script.
      */
     public static ByteCode compile(String source) {
-        return compile(source, true);
-    }
-
-    /**
-     * Returns a {@link ByteCode} object corresponding to the specified source code.
-     * The returned byte code can be subsequently evaluated by calling its {@link ByteCode#evaluate} method.
-     * @param source The script to compile.
-     * @param normalize <code>true</code> to encase source in square brackets if it is not encased already; otherwise, <code>false</code>.
-     * @return The compiled script.
-     */
-    public static ByteCode compile(String source, boolean normalize) {
-        return compile(source, new CompileOptions(normalize));
+        return compile(source, new CompileOptions());
     }
 
     /**
@@ -36,30 +38,10 @@ public final class Compiler {
      * @return The compiled script.
      */
     public static ByteCode compile(String source, CompileOptions options) {
-        String expression = options.getNormalize() ? normalize(source) : source;
+        String expression = normalize(source);
 
         Lexer lexer = new Lexer(options);
         Parser parser = new Parser(lexer.tokenize(expression));
         return new ByteCode(parser.parse());
-    }
-
-    private static String normalize(String expression) {
-        if (expression == null) {
-            return "";
-        }
-
-        String result = expression.trim();
-        if (result.isEmpty()) {
-            return "";
-        }
-
-        if (result.charAt(0) != '[') {
-            result = "[" + result;
-        }
-        if (result.charAt(result.length() - 1) != ']') {
-            result = result + "]";
-        }
-
-        return result;
     }
 }
