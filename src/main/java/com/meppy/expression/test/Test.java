@@ -14,7 +14,7 @@ import java.util.Locale;
 public final class Test {
     public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
 
-        ByteCode cc = Compiler.compile("The distance between points [a] and [b] is [Sqrt(Pow(a.X - b.X) + Pow(a.Y - b.Y))].", false);
+        ByteCode cc = Compiler.compile("The distance between points [a] and [b] is [Sqrt(Pow(a.X - b.X) + Pow(a.Y - b.Y))].");
         EvaluationContext ec = new EvaluationContext(null);
         ec.getLocalVars().put("a", new Point(5, 10));
         ec.getLocalVars().put("b", new Point(11, 8));
