@@ -217,9 +217,11 @@ public final class ExpressionUnitTest {
     @Test
     public void testFunctionsCdate2() throws InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException {
         DateFormat format = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.ROOT);
-        ByteCode code = Compiler.compile(Expressions.FUNCTIONS_CDATE2, compileOptions);
+        Date now = new Date();
+        String nowAsString = format.format(now);
+        ByteCode code = Compiler.compile("[cdate(\"" + nowAsString + "\")]", compileOptions);
         Object result = code.evaluate(evaluationContextDefault);
-        Assert.assertEquals(format.parse("Jan 27, 2019 7:44:44 PM"), result);
+        Assert.assertEquals(format.parse(nowAsString), result);
     }
 
     @Test

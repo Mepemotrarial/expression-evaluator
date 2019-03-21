@@ -57,7 +57,6 @@ public final class Expressions {
     public static final String FUNCTIONS_CBOOL2 = "[cbool(\"0\")]";
     public static final String FUNCTIONS_CBOOL3 = "[cbool(\"true\")]";
     public static final String FUNCTIONS_CDATE1 = "[cdate(2000000000)]";
-    public static final String FUNCTIONS_CDATE2 = "[cdate(\"Jan 27, 2019 7:44:44 PM\")]";
     public static final String FUNCTIONS_CDATE3 = "[cdate(now())]";
     public static final String FUNCTIONS_CDATE_INVALID = "[cdate(\"abc-def\")]";
     public static final String FUNCTIONS_CDBL1 = "[cdbl(\"25.1E2\")]";
