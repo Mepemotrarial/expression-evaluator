@@ -97,7 +97,7 @@ The unary minus operator can be applied to operands of the following types:
 
 | Operand | Result |
 |---------|--------|
-|null | null |
+| null | null |
 | Byte, Short, or Integer | Integer |
 | Long | Long |
 | Float | Float |
@@ -147,9 +147,9 @@ When several operators are used in the same expression and the order of preceden
 | == (equal), != (not equal) |
 | & (bitwise and) |
 | ^ (bitwise xor) |
-| | (bitwise or) |
+| \| (bitwise or) |
 | && (conditional and) |
-| || (conditional or) |
+| \|\| (conditional or) |
 
 If there is more than one operator in a row, they have the same priority and are evaluated from left to right. For example, in the expression `a / b * c`, the division is performed first.
 
